@@ -109,6 +109,12 @@ public class UserDaoImpl implements UserDao {
 			String sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ?, avatar = ? WHERE username = ?";
 			Object[] newObj = new Object[] { user.getFullname(), MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
 					user.getPhone(), user.getNote(), user.getAvatar(), user.getUsername() };
+			if(user.getAvatar()==null) {
+				sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ? WHERE username = ?";
+				newObj = new Object[] { user.getFullname(), MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
+						user.getPhone(), user.getNote(), user.getUsername() };
+			}
+			
 			int row = this.jdbcTemplate.update(sql, newObj);
 			if (row > 0) {
 				return true;

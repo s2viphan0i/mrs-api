@@ -41,7 +41,7 @@ public class UserController{
     }
 	
 	@RequestMapping(value="/edit", method = RequestMethod.PUT)
-	public ResponseModel editUser(@RequestParam(value="file") MultipartFile file,@RequestParam(value="user") String user) {
+	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
 		ResponseModel result = new ResponseModel();
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
