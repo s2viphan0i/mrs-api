@@ -1,0 +1,59 @@
+<html>
+<head></head>
+<body style="margin: 0; padding: 0;">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td>
+				<table align="center" border="0" cellpadding="0" cellspacing="0"
+					width="600">
+					<tr>
+						<td align="center" bgcolor="#1abc9c"
+							style="padding: 40px 0 30px 0;">
+							<div>
+                                <img src="http://sinnguyen.esy.es/bmusic.png" style="height: 150px" />
+                            </div>
+						</td>
+					</tr>
+					<tr>
+						<td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+							<table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<tr>
+									<td
+										style="color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+										<b th:text="|Dear ${username},|"></b>
+									</td>
+								</tr>
+								<tr>
+									<td style="padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+										<p>You have just signed up for a BMusic account.</b></p>
+										<p>To confirm your email address and start using BMusic please follow this link:</p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="text-align: center;"><a th:href="@{'http://localhost:8080/activate?code=' + ${code}}" style="text-decoration: none; background-color: #34495e; color: #FFF; padding:10px 10px; border-radius: 5px;font-family: Arial, sans-serif; font-weight: bold;">Confirm email</a></div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td bgcolor="#ee4c50" style="padding: 30px 30px 30px 30px;">
+							<table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<tr>
+									<td
+										style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px;">
+										&reg;BMusic admin, Vietnam 2018<br /> <a href="#"
+										style="color: #ffffff;"><font color="#ffffff">Unsubscribe</font></a>
+										to this newsletter instantly
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
