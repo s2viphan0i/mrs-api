@@ -34,7 +34,12 @@ public class UserController{
     }
 	
 	@RequestMapping(value="/get-user-by-username", method=RequestMethod.GET)
-    public ResponseModel getUserByUsername() {
+    public ResponseModel getUserByUsername(@RequestParam String username) {
+        return userService.getByUsername(username);
+    }
+	
+	@RequestMapping(value="/get-user-by-auth", method=RequestMethod.GET)
+    public ResponseModel getUserByAuth() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
         return userService.getByUsername(username);
