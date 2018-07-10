@@ -15,7 +15,9 @@ public class SpringConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+                        .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
+                        .allowCredentials(true)
+                        .allowedOrigins("http://localhost");
             }
         };
     }

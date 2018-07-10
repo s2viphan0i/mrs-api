@@ -6,14 +6,13 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.sinnguyen.model.ForgotDTO;
-import com.sinnguyen.model.UserDTO;
+import com.sinnguyen.entities.Forgot;
+import com.sinnguyen.entities.User;
 import com.sinnguyen.service.MailService;
 
 @Service
@@ -30,18 +29,18 @@ public class MailServiceImpl implements MailService {
         this.mailSender = mailSender;
     }
 	
-	public void sendWelcomeMail(UserDTO userDTO) {
+	public void sendWelcomeMail(User user) {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
 			mimeMessageHelper.setSubject("BBMusic Registration");
 			mimeMessageHelper.setFrom("hakleader@gmail.com");
-			mimeMessageHelper.setTo(userDTO.getEmail());
+			mimeMessageHelper.setTo(user.getEmail());
 
 			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("username", userDTO.getUsername());
-			model.put("code", userDTO.getCode());
+			model.put("username", user.getUsername());
+			model.put("code", user.getCode());
 
 			String content = mailContentBuilder.buildWelcomeMail(model);
 			mimeMessageHelper.setText(content, true);
@@ -52,7 +51,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendForgotMail(ForgotDTO forgot) {
+	public void sendForgotMail(Forgot forgot) {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		try {
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);

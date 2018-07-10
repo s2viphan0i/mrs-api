@@ -16,13 +16,16 @@ public class User implements Serializable {
 
 	private int id;
 	private String username;
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 	private String fullname;
 	private String avatar;
 	private String email;
 	private String phone;
 	private boolean isActivated;
+	@JsonIgnore
 	private String code;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date birthdate;
 	private String role;
 	private String note;
