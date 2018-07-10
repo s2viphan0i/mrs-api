@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.service.UserService;
+import com.sinnguyen.util.MainUtility;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -89,12 +91,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseModel editByUsername(User user) {
+	public ResponseModel editByUsername(User user, MultipartFile file) {
 		ResponseModel result = new ResponseModel();
-		if (user.getUsername() == null || user.getUsername().equals("") || user.getFullname() == null || user.getFullname().equals("")) {
+		if (user.getUsername() == null || user.getUsername().equals("") || user.getFullname() == null 
+				|| user.getFullname().equals("")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin người dùng không hợp lệ");
 		} else {
+			if(file!=null) {
+				String filename = MainUtility.saveFile(file);
+				user.setAvatar(filename);
+			}
 			if (userDao.editByUsername(user)) {
 				result.setSuccess(true);
 				result.setMsg("Sửa thông tin người dùng thành công");

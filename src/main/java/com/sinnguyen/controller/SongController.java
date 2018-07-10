@@ -10,37 +10,38 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.service.SongService;
+import com.sinnguyen.service.UserService;
 import com.sinnguyen.util.MainUtility;
 
 @RestController
-@RequestMapping("/user/music")
+@RequestMapping("/user/song")
 public class SongController {
 	
 	@Autowired
 	private SongService songService;
 	
-//	@RequestMapping(value="/edit", method = RequestMethod.PUT)
-//	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
-//		ResponseModel result = new ResponseModel();
-//		SecurityContext context = SecurityContextHolder.getContext();
-//		String username = context.getAuthentication().getName();
-//		try {
-//			ObjectMapper mapper = new ObjectMapper();
-//			User u = mapper.readValue(user, User.class);
-//			u.setUsername(username);
-//			if(file!=null) {
-//				String filename = MainUtility.saveFile(file);
-//				u.setAvatar(filename);
-//			}
-//			return userService.editByUsername(u);
-//		} catch (Exception ex) {
-//			result.setSuccess(false);
-//			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
-//			ex.printStackTrace();
-//			return result;
-//		}
-//	}
+	@RequestMapping(value="/add", method = RequestMethod.POST)
+	public ResponseModel addSong(@RequestParam(value="file", required=false) MultipartFile file, 
+			@RequestParam(value="image", required=false) MultipartFile image, @RequestParam(value="song") String song) {
+		ResponseModel result = new ResponseModel();
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Song s = mapper.readValue(song, Song.class);
+			User u = new User();
+			u.setUsername(username);
+			s.setUser(u);
+			return songService.add(s, file, image);
+		} catch (Exception ex) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			ex.printStackTrace();
+			return result;
+		}
+	}
 }

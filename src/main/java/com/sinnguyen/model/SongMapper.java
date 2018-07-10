@@ -9,7 +9,7 @@ import com.sinnguyen.entities.Genre;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 
-public class SongMapper  implements RowMapper<Song> {
+public class SongMapper implements RowMapper<Song> {
 
 	public Song mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Song song = new Song();
@@ -29,6 +29,7 @@ public class SongMapper  implements RowMapper<Song> {
 		song.setTotalTime(rs.getInt("totalTime"));
 		song.setViews(rs.getInt("views"));
 		song.setFavorites(rs.getInt("favorites"));
+		song.setNote(rs.getString("note"));
 		return song;
 	}
 }

@@ -62,6 +62,8 @@ public class MainUtility {
 			String extFile = getExt(file.getOriginalFilename());
 			if(file.getContentType().matches("image\\/?\\w+")) {
 				rootPath = CommonConstant.IMAGE_LOCATION;
+			} else if(file.getContentType().matches("audio\\/?\\w+")) {
+				rootPath = CommonConstant.AUDIO_LOCATION;
 			}
 			String filename = System.currentTimeMillis() +"."+ extFile;
 			Path pathFile = Paths.get(rootPath+filename);

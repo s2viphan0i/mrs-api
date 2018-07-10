@@ -25,7 +25,7 @@ public class MrsApiApplication extends WebSecurityConfigurerAdapter {
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/mrs");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/mrs?useUnicode=yes&characterEncoding=UTF-8");
 		dataSource.setUsername("root");
 		dataSource.setPassword("");
 		return dataSource;

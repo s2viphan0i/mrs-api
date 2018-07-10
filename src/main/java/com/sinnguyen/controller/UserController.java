@@ -53,11 +53,7 @@ public class UserController{
 			ObjectMapper mapper = new ObjectMapper();
 			User u = mapper.readValue(user, User.class);
 			u.setUsername(username);
-			if(file!=null) {
-				String filename = MainUtility.saveFile(file);
-				u.setAvatar(filename);
-			}
-			return userService.editByUsername(u);
+			return userService.editByUsername(u, file);
 		} catch (Exception ex) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");

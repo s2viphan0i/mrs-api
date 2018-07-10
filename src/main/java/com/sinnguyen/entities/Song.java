@@ -23,6 +23,7 @@ public class Song implements Serializable {
 	private int totalTime;
 	private int views;
 	private int favorites;
+	private String note;
 
 	public Song() {
 		super();
@@ -122,5 +123,13 @@ public class Song implements Serializable {
 
 	public void setLyric(String lyric) {
 		this.lyric = lyric;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }
