@@ -1,10 +1,10 @@
 package com.sinnguyen.service;
 
-import com.sinnguyen.model.ForgotDTO;
+import com.sinnguyen.entities.Forgot;
+import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
-import com.sinnguyen.model.UserDTO;
 
 public interface ForgotService {
-	ResponseModel forgot(UserDTO user);
-	ResponseModel resetPassword(ForgotDTO forgot);
+	ResponseModel forgot(User user);
+	ResponseModel resetPassword(Forgot forgot);
 }

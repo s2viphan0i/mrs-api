@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
-import com.sinnguyen.model.UserDTO;
 import com.sinnguyen.service.UserService;
 import com.sinnguyen.util.MainUtility;
 
@@ -52,7 +51,7 @@ public class UserController{
 		String username = context.getAuthentication().getName();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			UserDTO u = mapper.readValue(user, UserDTO.class);
+			User u = mapper.readValue(user, User.class);
 			u.setUsername(username);
 			if(file!=null) {
 				String filename = MainUtility.saveFile(file);

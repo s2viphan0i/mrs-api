@@ -1,28 +1,21 @@
 package com.sinnguyen.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
-import com.sinnguyen.model.UserDTO;
 import com.sinnguyen.service.UserService;
-import com.sinnguyen.util.Converter;
 
 @Service
 public class UserServiceImpl implements UserService {
 	@Autowired
 	UserDao userDao;
 
-	public ResponseModel add(UserDTO user) {
+	public ResponseModel add(User user) {
 		ResponseModel result = new ResponseModel();
 		if (user.getUsername() == null || user.getUsername().equals("") || user.getPassword() == null
 				|| user.getPassword().equals("") || user.getFullname() == null || user.getFullname().equals("")
@@ -30,11 +23,10 @@ public class UserServiceImpl implements UserService {
 			result.setSuccess(false);
 			result.setMsg("Thông tin người dùng không hợp lệ");
 		} else {
-			User u = Converter.userDTOToUser(user);
-			if (userDao.checkUsername(u)) {
-				if (userDao.add(u) && userDao.insertActivation(u)) {
-					user.setId(u.getId());
-					user.setCode(u.getCode());
+			if (userDao.checkUsername(user)) {
+				if (userDao.add(user) && userDao.insertActivation(user)) {
+					user.setId(user.getId());
+					user.setCode(user.getCode());
 					result.setSuccess(true);
 					result.setMsg("Đăng kí thành công, vui lòng kiểm tra mail để kích hoạt tài khoản");
 					result.setContent(user);
@@ -76,20 +68,16 @@ public class UserServiceImpl implements UserService {
 		result.setSuccess(true);
 		result.setMsg("Lấy danh sách người dùng thành công");
 		List<User> users = userDao.getAllUser();
-		List<UserDTO> userDTOs = new ArrayList<UserDTO>();
-		for(User u : users) {
-			userDTOs.add(Converter.userToUserDTO(u));
-		}
-		result.setContent(userDTOs);
+
+		result.setContent(users);
 		return result;
 	}
 	
 	public ResponseModel getByUsername(String username) {
 		ResponseModel result = new ResponseModel();
-		User u = userDao.getUserbyUsername(username);
+		User user = userDao.getUserbyUsername(username);
 
-		if (u != null) {
-			UserDTO user = Converter.userToUserDTO(u);
+		if (user != null) {
 			result.setSuccess(true);
 			result.setMsg("Lấy thông tin thành công");
 			result.setContent(user);
@@ -101,14 +89,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseModel editByUsername(UserDTO user) {
+	public ResponseModel editByUsername(User user) {
 		ResponseModel result = new ResponseModel();
 		if (user.getUsername() == null || user.getUsername().equals("") || user.getFullname() == null || user.getFullname().equals("")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin người dùng không hợp lệ");
 		} else {
-			User u = Converter.userDTOToUser(user);
-			if (userDao.editByUsername(u)) {
+			if (userDao.editByUsername(user)) {
 				result.setSuccess(true);
 				result.setMsg("Sửa thông tin người dùng thành công");
 				result.setContent(user);

@@ -3,7 +3,6 @@ package com.sinnguyen.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.User;
-import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SearchDTO;
 import com.sinnguyen.model.UserMapper;
 import com.sinnguyen.util.MainUtility;

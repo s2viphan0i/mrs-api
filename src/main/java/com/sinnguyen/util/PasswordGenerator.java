@@ -10,9 +10,9 @@ public class PasswordGenerator {
 	}
 	
 	public static void main(String[] args) {
-//		System.out.println(System.currentTimeMillis());
-//		System.out.println(genPassword("123"));
-//		System.out.println(System.currentTimeMillis());
-		System.out.println("image/jpeg".matches("image\\/?\\w+"));
+		System.out.println(System.currentTimeMillis());
+		System.out.println(genPassword("123"));
+		System.out.println(System.currentTimeMillis());
+//		System.out.println("image/jpeg".matches("image\\/?\\w+"));
 	}
 }

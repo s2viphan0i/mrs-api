@@ -1,16 +1,12 @@
 package com.sinnguyen.util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.springframework.web.multipart.MultipartFile;
 
