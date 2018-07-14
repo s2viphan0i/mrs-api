@@ -1,5 +1,7 @@
 package com.sinnguyen.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +12,7 @@ import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.Genre;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.model.ResponseModel;
+import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
 import com.sinnguyen.util.MainUtility;
 
@@ -54,6 +57,39 @@ public class SongServiceImpl implements SongService {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 			}
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel getList(SongDTO searchDto) {
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.getList(searchDto);
+		if(songs==null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if(songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setContent(songs);
+		}
+		return result;
+	}
+	
+	@Override
+	public ResponseModel getById(int id) {
+		ResponseModel result = new ResponseModel();
+		Song song = songDao.getById(id);
+		if(song!=null) {
+			result.setSuccess(true);
+			result.setMsg("Lấy thông tin bài hát thành công");
+			result.setContent(song);
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		}
 		return result;
 	}
