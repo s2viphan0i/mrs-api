@@ -11,7 +11,7 @@ public class Comment implements Serializable {
 	private int id;
 	private User user;
 	private String content;
-	private Date commentTime;
+	private Date createTime;
 
 	public Comment() {
 		super();
@@ -41,12 +41,12 @@ public class Comment implements Serializable {
 		this.content = content;
 	}
 
-	public Date getCommentTime() {
-		return commentTime;
+	public Date getCreateTime() {
+		return createTime;
 	}
 
-	public void setCommentTime(Date commentTime) {
-		this.commentTime = commentTime;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 }

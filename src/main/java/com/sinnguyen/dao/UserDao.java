@@ -18,5 +18,6 @@ public interface UserDao {
 	boolean activate(String code);
 	User getUserbyEmail(String email);
 	User getUserbyUsername(String username);
+	User getUserbyId(int id);
 	boolean changePassword(User user);
 }

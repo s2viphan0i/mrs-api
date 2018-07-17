@@ -18,7 +18,7 @@ import com.sinnguyen.service.UserService;
 import com.sinnguyen.util.MainUtility;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("")
 public class UserController{
 	
 	public UserController() {
@@ -37,14 +37,19 @@ public class UserController{
         return userService.getByUsername(username);
     }
 	
-	@RequestMapping(value="/get-user-by-auth", method=RequestMethod.GET)
+	@RequestMapping(value="/get-user-by-id", method=RequestMethod.GET)
+    public ResponseModel getUserById(@RequestParam int id) {
+        return userService.getById(id);
+    }
+	
+	@RequestMapping(value="/user/get-user-by-auth", method=RequestMethod.GET)
     public ResponseModel getUserByAuth() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
         return userService.getByUsername(username);
     }
 	
-	@RequestMapping(value="/edit", method = RequestMethod.PUT)
+	@RequestMapping(value="/user/edit", method = RequestMethod.PUT)
 	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
 		ResponseModel result = new ResponseModel();
 		SecurityContext context = SecurityContextHolder.getContext();
@@ -62,8 +67,4 @@ public class UserController{
 		}
 	}
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
-	public ResponseModel getUser(@PathVariable("id") int id) {
-		return userService.getById(id);
-	}
 }

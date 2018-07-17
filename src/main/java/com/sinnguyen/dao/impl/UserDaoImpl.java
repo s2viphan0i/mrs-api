@@ -181,4 +181,15 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 
+	@Override
+	public User getUserbyId(int id) {
+		String sql = "SELECT * FROM user WHERE id = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new UserMapper());
+			return (User) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 }

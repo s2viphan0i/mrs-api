@@ -62,7 +62,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public ResponseModel getById(int id) {
-		return null;
+		ResponseModel result = new ResponseModel();
+		User user = userDao.getUserbyId(id);
+
+		if (user != null) {
+			result.setSuccess(true);
+			result.setMsg("Lấy thông tin thành công");
+			result.setContent(user);
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
 	}
 
 	public ResponseModel getAllUser() {
