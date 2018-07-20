@@ -16,12 +16,16 @@ import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
+import com.sinnguyen.service.UserService;
 
 @RestController
 public class SongController {
 	
 	@Autowired
 	private SongService songService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@RequestMapping(value="/user/song/add", method = RequestMethod.POST)
 	public ResponseModel addSong(@RequestParam(value="file", required=false) MultipartFile file, 
@@ -47,6 +51,11 @@ public class SongController {
 	@RequestMapping(value="/song/get-list", method = RequestMethod.POST)
 	public ResponseModel getList(@RequestBody SongDTO searchDto) {
 		return songService.getList(searchDto);
+	}
+	
+	@RequestMapping(value="/user/song/get-list", method = RequestMethod.POST)
+	public ResponseModel userGetList(@RequestBody SongDTO searchDto) {
+		return songService.userGetList(searchDto);
 	}
 	
 	@RequestMapping(value="/user/song", method = RequestMethod.GET)

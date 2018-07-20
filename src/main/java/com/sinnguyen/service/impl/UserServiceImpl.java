@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
@@ -16,6 +17,9 @@ import com.sinnguyen.util.MainUtility;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	FavoriteDao favoriteDao;
 
 	public ResponseModel add(User user) {
 		ResponseModel result = new ResponseModel();
@@ -121,6 +125,25 @@ public class UserServiceImpl implements UserService {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra! Vui lòng kiểm tra lại");
 			}
+		}
+		return result;
+	}
+	
+	public ResponseModel doFavorite(String username, int songId) {
+		ResponseModel result = new ResponseModel();
+		try {
+			if(favoriteDao.checkFavorite(username, songId)) {
+				favoriteDao.removeFavorite(username, songId);
+				result.setSuccess(true);
+				result.setMsg("Xóa bài hát ưa thích thành công");
+			}else {
+				favoriteDao.addFavorite(username, songId);
+				result.setSuccess(true);
+				result.setMsg("Thêm bài hát ưa thích thành công");
+			}
+		}catch(Exception e) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		}
 		return result;
 	}

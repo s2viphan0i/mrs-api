@@ -17,9 +17,49 @@ public class SongDTO extends SearchDTO {
 	private Date endDate;
 	private Integer userId;
 	private String username;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
+	private Date viewStartDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
+	private Date viewEndDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
+	private Date favoriteStartDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
+	private Date favoriteEndDate;
 
 	public SongDTO() {
 		super();
+	}
+
+	public Date getViewStartDate() {
+		return viewStartDate;
+	}
+
+	public void setViewStartDate(Date viewStartDate) {
+		this.viewStartDate = viewStartDate;
+	}
+
+	public Date getViewEndDate() {
+		return viewEndDate;
+	}
+
+	public void setViewEndDate(Date viewEndDate) {
+		this.viewEndDate = viewEndDate;
+	}
+
+	public Date getFavoriteStartDate() {
+		return favoriteStartDate;
+	}
+
+	public void setFavoriteStartDate(Date favoriteStartDate) {
+		this.favoriteStartDate = favoriteStartDate;
+	}
+
+	public Date getFavoriteEndDate() {
+		return favoriteEndDate;
+	}
+
+	public void setFavoriteEndDate(Date favoriteEndDate) {
+		this.favoriteEndDate = favoriteEndDate;
 	}
 
 	public Integer getGenreId() {

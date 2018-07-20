@@ -49,6 +49,13 @@ public class UserController{
         return userService.getByUsername(username);
     }
 	
+	@RequestMapping(value="/user/favorite", method=RequestMethod.POST)
+    public ResponseModel doFavorite(@RequestParam int songId) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+        return userService.doFavorite(username, songId);
+    }
+	
 	@RequestMapping(value="/user/edit", method = RequestMethod.PUT)
 	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
 		ResponseModel result = new ResponseModel();

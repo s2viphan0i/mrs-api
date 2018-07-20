@@ -24,6 +24,7 @@ public class Song implements Serializable {
 	private int totalTime;
 	private int views;
 	private int favorites;
+	private boolean favorited;
 	private List<Comment> comments;
 	private String note;
 
@@ -141,6 +142,14 @@ public class Song implements Serializable {
 
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
+	}
+
+	public boolean isFavorited() {
+		return favorited;
+	}
+
+	public void setFavorited(boolean favorited) {
+		this.favorited = favorited;
 	}
 
 }
