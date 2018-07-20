@@ -157,6 +157,8 @@ public class SongDaoImpl implements SongDao {
 		if(searchDto.getSortField()!=null) {
 			if(searchDto.getSortField().equals("views")) {
 				sql.append(" ORDER BY views");
+			} else if(searchDto.getSortField().equals("favorites")) {
+				sql.append(" ORDER BY favorites");
 			} else {
 				sql.append(" ORDER BY song.id");
 			}

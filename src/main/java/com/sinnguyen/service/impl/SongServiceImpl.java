@@ -49,7 +49,7 @@ public class SongServiceImpl implements SongService {
 			song.setGenre(genre);
 			String fileurl = MainUtility.saveFile(file);
 			song.setUrl(fileurl);
-			String imageurl = MainUtility.saveFile(image);
+			String imageurl = MainUtility.saveSquareImage(image);
 			song.setImage(imageurl);
 			song.setUser(userDao.getUserbyUsername(song.getUser().getUsername()));
 			if (songDao.add(song)) {

@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 			result.setMsg("Thông tin người dùng không hợp lệ");
 		} else {
 			if(file!=null) {
-				String filename = MainUtility.saveFile(file);
+				String filename = MainUtility.saveSquareImage(file);
 				user.setAvatar(filename);
 			}
 			if (userDao.editByUsername(user)) {
