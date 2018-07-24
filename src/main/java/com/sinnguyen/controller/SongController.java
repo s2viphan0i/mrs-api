@@ -3,6 +3,7 @@ package com.sinnguyen.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,18 +14,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
+import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
 import com.sinnguyen.service.UserService;
-import com.sinnguyen.util.MainUtility;
 
 @RestController
-@RequestMapping("/user/song")
 public class SongController {
 	
 	@Autowired
 	private SongService songService;
 	
-	@RequestMapping(value="/add", method = RequestMethod.POST)
+	@Autowired
+	private UserService userService;
+	
+	@RequestMapping(value="/user/song/add", method = RequestMethod.POST)
 	public ResponseModel addSong(@RequestParam(value="file", required=false) MultipartFile file, 
 			@RequestParam(value="image", required=false) MultipartFile image, @RequestParam(value="song") String song) {
 		ResponseModel result = new ResponseModel();
@@ -43,5 +46,27 @@ public class SongController {
 			ex.printStackTrace();
 			return result;
 		}
+	}
+	
+	@RequestMapping(value="/song/get-list", method = RequestMethod.POST)
+	public ResponseModel getList(@RequestBody SongDTO searchDto) {
+		return songService.getList(searchDto);
+	}
+	
+	@RequestMapping(value="/user/song/get-list", method = RequestMethod.POST)
+	public ResponseModel userGetList(@RequestBody SongDTO searchDto) {
+		return songService.userGetList(searchDto);
+	}
+	
+	@RequestMapping(value="/user/song", method = RequestMethod.GET)
+	public ResponseModel userGetById(@RequestParam(name="id") int id) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		return songService.userGetById(username, id);
+	}
+	
+	@RequestMapping(value="/song", method = RequestMethod.GET)
+	public ResponseModel getById(@RequestParam(name="id") int id) {
+		return songService.getById(id);
 	}
 }

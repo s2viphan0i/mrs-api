@@ -14,4 +14,5 @@ public interface UserService {
 	ResponseModel getByUsername(String username);
 	ResponseModel activate(String code);
 	ResponseModel editByUsername(User user, MultipartFile file);
+	ResponseModel doFavorite(String username, int songid);
 }
