@@ -59,6 +59,13 @@ public class SongController {
 	}
 	
 	@RequestMapping(value="/user/song", method = RequestMethod.GET)
+	public ResponseModel userGetById(@RequestParam(name="id") int id) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		return songService.userGetById(username, id);
+	}
+	
+	@RequestMapping(value="/song", method = RequestMethod.GET)
 	public ResponseModel getById(@RequestParam(name="id") int id) {
 		return songService.getById(id);
 	}

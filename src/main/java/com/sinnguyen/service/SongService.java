@@ -10,5 +10,6 @@ public interface SongService {
 	ResponseModel add(Song song, MultipartFile file, MultipartFile image);
 	ResponseModel getList(SongDTO searchDto);
 	ResponseModel userGetList(SongDTO searchDto);
+	ResponseModel userGetById(String username, int id);
 	ResponseModel getById(int id);
 }

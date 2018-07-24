@@ -104,6 +104,23 @@ public class SongServiceImpl implements SongService {
 	}
 	
 	@Override
+	public ResponseModel userGetById(String username, int id) {
+		ResponseModel result = new ResponseModel();
+		User user = userDao.getUserbyUsername(username);
+		Song song = songDao.userGetById(user, id);
+		if(song!=null) {
+			//add view
+			result.setSuccess(true);
+			result.setMsg("Lấy thông tin bài hát thành công");
+			result.setContent(song);
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
+	}
+	
+	@Override
 	public ResponseModel getById(int id) {
 		ResponseModel result = new ResponseModel();
 		Song song = songDao.getById(id);

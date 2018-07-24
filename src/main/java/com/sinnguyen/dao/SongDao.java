@@ -11,4 +11,5 @@ public interface SongDao {
 	List<Song> getList(SongDTO searchDto);
 	List<Song> userGetList(User user, SongDTO searchDto);
 	Song getById(int id);
+	Song userGetById(User user, int id);
 }

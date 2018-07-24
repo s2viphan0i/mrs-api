@@ -44,17 +44,17 @@ public class SongDaoImpl implements SongDao {
 	public List<Song> getList(SongDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT song.id, song.title, song.image, song.url,"
-				+ "(SELECT COUNT(user_id) FROM view v INNER JOIN song s ON s.id = v.song_id WHERE song.id = s.id");
+				+ "(SELECT COUNT(user_id) FROM view v WHERE v.song_id = song.id");
 		if(searchDto.getViewStartDate()!=null&&searchDto.getViewEndDate()!=null) {
 			sql.append(" AND v.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getViewEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
 					+ "AND v.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getViewStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
 		}
-		sql.append(") AS views, (SELECT COUNT(user_id) FROM favorite f INNER JOIN song s ON s.id = f.song_id WHERE song.id = s.id");
+		sql.append(") AS views, (SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id");
 		if(searchDto.getFavoriteStartDate()!=null&&searchDto.getFavoriteEndDate()!=null) {
 			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFavoriteEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
 					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFavoriteStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
 		}
-		sql.append(") AS favorites, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
+		sql.append(") AS favorites, false AS favorited, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
 				+ "INNER JOIN user WHERE song.owner_id = user.id");
 		if(searchDto.getKeyword()!=null) {
 			sql.append(" AND song.title LIKE '%"+searchDto.getKeyword()+"%'");
@@ -123,18 +123,18 @@ public class SongDaoImpl implements SongDao {
 	public List<Song> userGetList(User user, SongDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT song.id, song.title, song.image, song.url,"
-				+ "(SELECT COUNT(user_id) FROM view v INNER JOIN song s ON s.id = v.song_id WHERE song.id = s.id");
+				+ "(SELECT COUNT(user_id) FROM view v WHERE v.song_id = song.id");
 		if(searchDto.getViewStartDate()!=null&&searchDto.getViewEndDate()!=null) {
 			sql.append(" AND v.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getViewEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
 					+ "AND v.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getViewStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
 		}
-		sql.append(") AS views, (SELECT COUNT(user_id) FROM favorite f INNER JOIN song s ON s.id = f.song_id WHERE song.id = s.id");
+		sql.append(") AS views, (SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id");
 		if(searchDto.getFavoriteStartDate()!=null&&searchDto.getFavoriteEndDate()!=null) {
 			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFavoriteEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
 					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFavoriteStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
 		}
-		sql.append(") AS favorites,(SELECT EXISTS (SELECT 1 FROM favorite f INNER JOIN song s "
-				+ "WHERE s.id = f.song_id AND song.id = s.id AND f.user_id = "+user.getId()+")) AS favorited, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
+		sql.append(") AS favorites,(SELECT EXISTS (SELECT 1 FROM favorite f WHERE f.song_id = song.id AND f.user_id = "+user.getId()+")) "
+				+ "AS favorited, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
 				+ "INNER JOIN user WHERE song.owner_id = user.id");
 		if(searchDto.getKeyword()!=null) {
 			sql.append(" AND song.title LIKE '%"+searchDto.getKeyword()+"%'");
@@ -202,12 +202,26 @@ public class SongDaoImpl implements SongDao {
 
 	@Override
 	public Song getById(int id) {
-		String sql = "SELECT song.*, genre.name AS genre_name, user.username AS owner_name, "
-				+ "(SELECT COUNT(user_id) FROM view v INNER JOIN song s WHERE s.id = v.song_id AND song.id = s.id) AS views, "
-				+ "(SELECT COUNT(user_id) FROM favorite f INNER JOIN song s WHERE s.id = f.song_id AND song.id = s.id) AS favorites "
+		String sql = "SELECT song.*, genre.name AS genre_name, user.username AS owner_name, user.fullname AS owner_fullname, "
+				+ "user.avatar AS owner_avatar, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
+				+ "(SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id) AS favorites, false AS favorited "
 				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id INNER JOIN user ON song.owner_id = user.id WHERE song.id = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new SongMapper());
+			return (Song) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public Song userGetById(User user, int id) {
+		String sql = "SELECT song.*, genre.name AS genre_name, user.username AS owner_name, user.fullname AS owner_fullname, "
+				+ "user.avatar AS owner_avatar, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
+				+ "(SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id) AS favorites, "
+				+ "(SELECT EXISTS (SELECT 1 FROM favorite f WHERE f.song_id = song.id AND f.user_id = ?)) AS favorited "
+				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id INNER JOIN user ON song.owner_id = user.id WHERE song.id = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { user.getId(), id }, new SongMapper());
 			return (Song) queryForObject;
 		} catch (Exception e) {
 			return null;
