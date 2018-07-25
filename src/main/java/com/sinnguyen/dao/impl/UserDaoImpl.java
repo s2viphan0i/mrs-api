@@ -158,9 +158,25 @@ public class UserDaoImpl implements UserDao {
 	}
 	
 	public User getUserbyUsername(String username) {
-		String sql = "SELECT * FROM user WHERE username = ?";
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers, "
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, false AS followed "
+				+ "FROM user WHERE username = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new UserMapper());
+			return (User) queryForObject;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public User userGetUserbyUsername(String username, int currentId) {
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers, "
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, "
+				+ "(SELECT EXISTS (SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id=?)) AS followed "
+				+ "FROM user WHERE username = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {currentId, username }, new UserMapper());
 			return (User) queryForObject;
 		} catch (Exception e) {
 			return null;
@@ -183,9 +199,25 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User getUserbyId(int id) {
-		String sql = "SELECT * FROM user WHERE id = ?";
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers,"
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, false AS followed "
+				+ "FROM user WHERE id = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new UserMapper());
+			return (User) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public User userGetUserbyId(int id, int currentId) {
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers,"
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings,"
+				+ "(SELECT EXISTS (SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id=?)) AS followed "
+				+ "FROM user WHERE id = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {currentId, id }, new UserMapper());
 			return (User) queryForObject;
 		} catch (Exception e) {
 			return null;

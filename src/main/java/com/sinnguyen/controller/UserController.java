@@ -37,9 +37,23 @@ public class UserController{
         return userService.getByUsername(username);
     }
 	
+	@RequestMapping(value="/user/get-user-by-username", method=RequestMethod.GET)
+    public ResponseModel userGetUserByUsername(@RequestParam String username) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String currentUsername = context.getAuthentication().getName();
+        return userService.userGetByUsername(username, currentUsername);
+    }
+	
 	@RequestMapping(value="/get-user-by-id", method=RequestMethod.GET)
     public ResponseModel getUserById(@RequestParam int id) {
         return userService.getById(id);
+    }
+	
+	@RequestMapping(value="/user/get-user-by-id", method=RequestMethod.GET)
+    public ResponseModel userGetUserById(@RequestParam int id) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String currentUsername = context.getAuthentication().getName();
+        return userService.userGetById(id, currentUsername);
     }
 	
 	@RequestMapping(value="/user/get-user-by-auth", method=RequestMethod.GET)
@@ -73,5 +87,11 @@ public class UserController{
 			return result;
 		}
 	}
+	@RequestMapping(value="/user/follow", method=RequestMethod.POST)
+    public ResponseModel doFollow(@RequestParam int userId) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+        return userService.doFollow(username, userId);
+    }
 	
 }

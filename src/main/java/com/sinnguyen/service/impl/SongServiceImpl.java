@@ -11,9 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sinnguyen.dao.GenreDao;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.dao.UserDao;
+import com.sinnguyen.dao.ViewDao;
 import com.sinnguyen.entities.Genre;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.entities.View;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
@@ -30,6 +32,9 @@ public class SongServiceImpl implements SongService {
 	
 	@Autowired
 	private GenreDao genreDao;
+	
+	@Autowired
+	private ViewDao viewDao;
 	
 	@Override
 	public ResponseModel add(Song song, MultipartFile file, MultipartFile image) {
@@ -106,14 +111,23 @@ public class SongServiceImpl implements SongService {
 	@Override
 	public ResponseModel userGetById(String username, int id) {
 		ResponseModel result = new ResponseModel();
-		User user = userDao.getUserbyUsername(username);
-		Song song = songDao.userGetById(user, id);
-		if(song!=null) {
-			//add view
-			result.setSuccess(true);
-			result.setMsg("Lấy thông tin bài hát thành công");
-			result.setContent(song);
-		} else {
+		try {
+			User user = userDao.getUserbyUsername(username);
+			Song song = songDao.userGetById(user, id);
+			View view = new View();
+			view.setUser(user);
+			view.setSong(song);
+			if(song!=null) {
+				viewDao.addView(view);
+				song.setViews(song.getViews()+1);
+				result.setSuccess(true);
+				result.setMsg("Lấy thông tin bài hát thành công");
+				result.setContent(song);
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			}
+		}catch(Exception e) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		}
@@ -123,12 +137,17 @@ public class SongServiceImpl implements SongService {
 	@Override
 	public ResponseModel getById(int id) {
 		ResponseModel result = new ResponseModel();
-		Song song = songDao.getById(id);
-		if(song!=null) {
-			result.setSuccess(true);
-			result.setMsg("Lấy thông tin bài hát thành công");
-			result.setContent(song);
-		} else {
+		try {
+			Song song = songDao.getById(id);
+			if(song!=null) {
+				result.setSuccess(true);
+				result.setMsg("Lấy thông tin bài hát thành công");
+				result.setContent(song);
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			}
+		}catch(Exception e) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		}
