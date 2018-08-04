@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.sinnguyen.dao.ViewDao;
 import com.sinnguyen.entities.View;
+import com.sinnguyen.model.ViewMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -27,6 +28,18 @@ public class ViewDaoImpl implements ViewDao {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public View getLastView(String username, int songId) {
+		String sql = "SELECT * FROM view INNER JOIN user ON view.user_id = user.id WHERE user.username = ? AND song_id = ?"
+				+ " ORDER BY view.id DESC LIMIT 1";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {username, songId }, new ViewMapper());
+			return (View) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

@@ -8,6 +8,7 @@ public class SearchDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String keyword;
+	private Integer total;
 	private Integer results;
 	private Integer page;
 	private String sortField;
@@ -55,6 +56,14 @@ public class SearchDTO implements Serializable {
 
 	public void setSortOrder(String sortOrder) {
 		this.sortOrder = sortOrder;
+	}
+
+	public Integer getTotal() {
+		return total;
+	}
+
+	public void setTotal(Integer total) {
+		this.total = total;
 	}
 
 }

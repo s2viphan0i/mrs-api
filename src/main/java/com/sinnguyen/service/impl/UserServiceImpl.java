@@ -3,6 +3,7 @@ package com.sinnguyen.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,6 +117,35 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
+	public ResponseModel login(User user) {
+		ResponseModel result = new ResponseModel();
+		if(user.getUsername()==null||user.getUsername().equals("")||user.getPassword()==null||user.getPassword().equals("")) {
+			result.setSuccess(false);
+			result.setMsg("Tên đăng nhập hoặc mật khẩu không được rỗng");
+			return result;
+		}
+		User u = userDao.getUserbyUsername(user.getUsername());
+		if (u!=null) {
+			if (BCrypt.checkpw(user.getPassword(), u.getPassword())) {
+				if (u.isActivated()) {
+					result.setSuccess(true);
+					result.setMsg("Đăng nhập thành công");
+					result.setContent(u);
+				} else {
+					result.setSuccess(false);
+					result.setMsg("Tài khoản chưa được kích hoạt");
+				}
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Sai tên đăng nhập hoặc mật khẩu");
+			}
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Sai tên đăng nhập hoặc mật khẩu");
+		}
+		return result;
+	}
+	
 	@Override
 	public ResponseModel editByUsername(User user, MultipartFile file) {
 		ResponseModel result = new ResponseModel();

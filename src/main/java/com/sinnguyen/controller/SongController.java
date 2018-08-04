@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.entities.View;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
@@ -63,6 +64,16 @@ public class SongController {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
 		return songService.userGetById(username, id);
+	}
+	
+	@RequestMapping(value="/user/view", method = RequestMethod.POST)
+	public ResponseModel userViewSong(@RequestBody View view) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = new User();
+		user.setUsername(username);
+		view.setUser(user);
+		return songService.userViewSong(view);
 	}
 	
 	@RequestMapping(value="/song", method = RequestMethod.GET)

@@ -34,30 +34,7 @@ public class AuthController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseModel login(@RequestBody User user) {
-		ResponseModel result = new ResponseModel();
-		if(user.getUsername()==null||user.getUsername().equals("")||user.getPassword()==null||user.getPassword().equals("")) {
-			result.setSuccess(false);
-			result.setMsg("Tên đăng nhập hoặc mật khẩu không được rỗng");
-			return result;
-		}
-		result = userService.getByUsername(user.getUsername());
-		if (result.isSuccess()) {
-			if (BCrypt.checkpw(user.getPassword(), ((User) result.getContent()).getPassword())) {
-				if (((User) result.getContent()).isActivated()) {
-					result.setSuccess(true);
-					result.setMsg("Đăng nhập thành công");
-				} else {
-					result.setSuccess(false);
-					result.setMsg("Tài khoản chưa được kích hoạt");
-					result.setContent(null);
-				}
-			} else {
-				result.setSuccess(false);
-				result.setMsg("Sai tên đăng nhập hoặc mật khẩu");
-				result.setContent(null);
-			}
-		}
-		return result;
+		return userService.login(user);
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)

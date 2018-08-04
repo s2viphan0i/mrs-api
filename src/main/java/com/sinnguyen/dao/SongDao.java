@@ -10,6 +10,7 @@ public interface SongDao {
 	boolean add(Song song);
 	List<Song> getList(SongDTO searchDto);
 	List<Song> userGetList(User user, SongDTO searchDto);
+	void getCountList(SongDTO searchDto);
 	Song getById(int id);
 	Song userGetById(User user, int id);
 }

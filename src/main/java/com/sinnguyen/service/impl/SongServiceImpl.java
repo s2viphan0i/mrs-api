@@ -1,5 +1,6 @@
 package com.sinnguyen.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,15 +95,18 @@ public class SongServiceImpl implements SongService {
 		User user = userDao.getUserbyUsername(username);
 		ResponseModel result = new ResponseModel();
 		List<Song> songs = songDao.userGetList(user, searchDto);
+		songDao.getCountList(searchDto);
 		if(songs==null) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		} else if(songs.isEmpty()) {
 			result.setSuccess(true);
 			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setTotal(0);
 		} else {
 			result.setSuccess(true);
 			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
 			result.setContent(songs);
 		}
 		return result;
@@ -114,12 +118,7 @@ public class SongServiceImpl implements SongService {
 		try {
 			User user = userDao.getUserbyUsername(username);
 			Song song = songDao.userGetById(user, id);
-			View view = new View();
-			view.setUser(user);
-			view.setSong(song);
 			if(song!=null) {
-				viewDao.addView(view);
-				song.setViews(song.getViews()+1);
 				result.setSuccess(true);
 				result.setMsg("Lấy thông tin bài hát thành công");
 				result.setContent(song);
@@ -150,6 +149,37 @@ public class SongServiceImpl implements SongService {
 		}catch(Exception e) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userViewSong(View view) {
+		ResponseModel result = new ResponseModel();
+		View lastView = viewDao.getLastView(view.getUser().getUsername(), view.getSong().getId());
+		Date listenTime = new Date();
+		view.setListenTime(listenTime);
+		if(lastView == null) {
+			Song song = songDao.getById(view.getSong().getId());
+			User user = userDao.getUserbyUsername(view.getUser().getUsername());
+			view.setUser(user);
+			view.setSong(song);
+			viewDao.addView(view);
+			result.setSuccess(true);
+			result.setMsg("Thêm lượt nghe thành công");
+		} else {
+			if(view.getListenTime().getTime()-lastView.getListenTime().getTime()>600000) {
+				Song song = songDao.getById(view.getSong().getId());
+				User user = userDao.getUserbyUsername(view.getUser().getUsername());
+				view.setUser(user);
+				view.setSong(song);
+				viewDao.addView(view);
+				result.setSuccess(true);
+				result.setMsg("Thêm lượt nghe thành công");
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Thêm lượt nghe thất bại");
+			}
 		}
 		return result;
 	}

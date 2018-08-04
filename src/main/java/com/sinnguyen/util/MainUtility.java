@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 import org.springframework.web.multipart.MultipartFile;
 
 public class MainUtility {
-	public static Date StringtoDate(String date, String format) {
+	public static Date stringtoDate(String date, String format) {
 		try {
 			return new SimpleDateFormat(format).parse(date);
 		} catch (ParseException e) {
