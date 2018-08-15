@@ -14,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
+import com.sinnguyen.model.UserDTO;
 import com.sinnguyen.service.UserService;
-import com.sinnguyen.util.MainUtility;
 
 @RestController
 @RequestMapping("")
@@ -27,51 +27,39 @@ public class UserController{
 	@Autowired
 	private UserService userService;
 	
-	@RequestMapping(value="/delete", method=RequestMethod.DELETE)
-    public ResponseModel deleteUser(@RequestBody User user) {
-        return userService.delete(user);
-    }
-	
-	@RequestMapping(value="/get-user-by-username", method=RequestMethod.GET)
-    public ResponseModel getUserByUsername(@RequestParam String username) {
+	@RequestMapping(value="/users/username/{username}", method=RequestMethod.GET)
+    public ResponseModel getUserByUsername(@PathVariable("username") String username) {
         return userService.getByUsername(username);
     }
 	
-	@RequestMapping(value="/user/get-user-by-username", method=RequestMethod.GET)
-    public ResponseModel userGetUserByUsername(@RequestParam String username) {
+	@RequestMapping(value="/user/users/username/{username}", method=RequestMethod.GET)
+    public ResponseModel userGetUserByUsername(@PathVariable("username") String username) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String currentUsername = context.getAuthentication().getName();
         return userService.userGetByUsername(username, currentUsername);
     }
 	
-	@RequestMapping(value="/get-user-by-id", method=RequestMethod.GET)
-    public ResponseModel getUserById(@RequestParam int id) {
+	@RequestMapping(value="/users/{id}", method=RequestMethod.GET)
+    public ResponseModel getUserById(@PathVariable("id") int id) {
         return userService.getById(id);
     }
 	
-	@RequestMapping(value="/user/get-user-by-id", method=RequestMethod.GET)
-    public ResponseModel userGetUserById(@RequestParam int id) {
+	@RequestMapping(value="/user/users/{id}", method=RequestMethod.GET)
+    public ResponseModel userGetUserById(@PathVariable("id") int id) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String currentUsername = context.getAuthentication().getName();
         return userService.userGetById(id, currentUsername);
     }
 	
-	@RequestMapping(value="/user/get-user-by-auth", method=RequestMethod.GET)
+	@RequestMapping(value="/user/users/auth", method=RequestMethod.GET)
     public ResponseModel getUserByAuth() {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
         return userService.getByUsername(username);
     }
 	
-	@RequestMapping(value="/user/favorite", method=RequestMethod.POST)
-    public ResponseModel doFavorite(@RequestParam int songId) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		String username = context.getAuthentication().getName();
-        return userService.doFavorite(username, songId);
-    }
-	
-	@RequestMapping(value="/user/edit", method = RequestMethod.PUT)
-	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
+	@RequestMapping(value="/user/users/{id}", method = RequestMethod.PUT)
+	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user, @PathVariable("id") int id) {
 		ResponseModel result = new ResponseModel();
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
@@ -79,6 +67,7 @@ public class UserController{
 			ObjectMapper mapper = new ObjectMapper();
 			User u = mapper.readValue(user, User.class);
 			u.setUsername(username);
+			u.setId(id);
 			return userService.editByUsername(u, file);
 		} catch (Exception ex) {
 			result.setSuccess(false);
@@ -87,11 +76,21 @@ public class UserController{
 			return result;
 		}
 	}
-	@RequestMapping(value="/user/follow", method=RequestMethod.POST)
-    public ResponseModel doFollow(@RequestParam int userId) {
+	@RequestMapping(value="/user/users/{id}/follows", method=RequestMethod.POST)
+    public ResponseModel doFollow(@PathVariable("id") int id) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
-        return userService.doFollow(username, userId);
+        return userService.doFollow(username, id);
     }
+	
+	@RequestMapping(value="/user/users/list", method = RequestMethod.POST)
+	public ResponseModel userGetList(@RequestBody UserDTO searchDto) {
+		return userService.userGetList(searchDto);
+	}
+	
+	@RequestMapping(value="/users/list", method = RequestMethod.POST)
+	public ResponseModel getList(@RequestBody UserDTO searchDto) {
+		return userService.getList(searchDto);
+	}
 	
 }

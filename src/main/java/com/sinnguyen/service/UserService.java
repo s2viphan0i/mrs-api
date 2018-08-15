@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
+import com.sinnguyen.model.UserDTO;
 
 public interface UserService {
 	ResponseModel add(User user);
@@ -17,6 +18,7 @@ public interface UserService {
 	ResponseModel userGetByUsername(String username, String currentUsername);
 	ResponseModel activate(String code);
 	ResponseModel editByUsername(User user, MultipartFile file);
-	ResponseModel doFavorite(String username, int songid);
 	ResponseModel doFollow(String username, int userId);
+	ResponseModel userGetList(UserDTO searchDto);
+	ResponseModel getList(UserDTO searchDto);
 }

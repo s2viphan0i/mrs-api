@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.SearchDTO;
+import com.sinnguyen.model.UserDTO;
 
 public interface UserDao {
 	boolean add(User user);
@@ -22,4 +23,7 @@ public interface UserDao {
 	User getUserbyId(int id);
 	User userGetUserbyId(int id, int currentId);
 	boolean changePassword(User user);
+	List<User> userGetList(User user, UserDTO userDto);
+	List<User> getList(UserDTO userDto);
+	void getCountList(UserDTO userDto);
 }

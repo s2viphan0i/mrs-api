@@ -3,6 +3,8 @@ package com.sinnguyen.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,7 @@ import com.sinnguyen.entities.Follow;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
+import com.sinnguyen.model.UserDTO;
 import com.sinnguyen.service.UserService;
 import com.sinnguyen.util.MainUtility;
 
@@ -170,30 +173,6 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
-	public ResponseModel doFavorite(String username, int songId) {
-		ResponseModel result = new ResponseModel();
-		Favorite favorite = new Favorite();
-		User user = userDao.getUserbyUsername(username);
-		favorite.setUser(user);
-		Song song = songDao.getById(songId);
-		favorite.setSong(song);
-		if (song != null) {
-			if (favoriteDao.checkFavorite(favorite)) {
-				favoriteDao.removeFavorite(favorite);
-				result.setSuccess(true);
-				result.setMsg("Xóa bài hát ưa thích thành công");
-			} else {
-				favoriteDao.addFavorite(favorite);
-				result.setSuccess(true);
-				result.setMsg("Thêm bài hát ưa thích thành công");
-			}
-		} else {
-			result.setSuccess(false);
-			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
-		}
-		return result;
-	}
-
 	public ResponseModel doFollow(String username, int userId) {
 		ResponseModel result = new ResponseModel();
 		Follow follow = new Follow();
@@ -251,6 +230,50 @@ public class UserServiceImpl implements UserService {
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userGetList(UserDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<User> users = userDao.userGetList(user, searchDto);
+		userDao.getCountList(searchDto);
+		if(users==null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if(users.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setTotal(0);
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
+			result.setContent(users);
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel getList(UserDTO searchDto) {
+		ResponseModel result = new ResponseModel();
+		List<User> users = userDao.getList(searchDto);
+		userDao.getCountList(searchDto);
+		if(users==null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if(users.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
+			result.setContent(users);
 		}
 		return result;
 	}

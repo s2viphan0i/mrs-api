@@ -13,18 +13,21 @@ import com.sinnguyen.util.MainUtility;
 
 @Repository
 public class ViewDaoImpl implements ViewDao {
-	
+
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
 	@Override
 	public boolean addView(View view) {
-		String sql = "INSERT INTO view(user_id, song_id, timestamp) "
-				+ "VALUES (?, ?, ?)";
+		String sql = "INSERT INTO view(user_id, song_id, timestamp) " + "VALUES (?, ?, ?)";
 		try {
-		Object[] newObj = new Object[] { view.getUser().getId(), view.getSong().getId(), MainUtility.dateToStringFormat(new Date(), "yyyy-MM-dd HH:mm:ss") };
-		int row = this.jdbcTemplate.update(sql, newObj);
-		}catch(Exception e) {
+			Object[] newObj = new Object[] { view.getUser().getId(), view.getSong().getId(),
+					MainUtility.dateToStringFormat(view.getListenTime(), "yyyy-MM-dd HH:mm:ss") };
+			int row = this.jdbcTemplate.update(sql, newObj);
+			if (row > 0) {
+				return true;
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -35,7 +38,8 @@ public class ViewDaoImpl implements ViewDao {
 		String sql = "SELECT * FROM view INNER JOIN user ON view.user_id = user.id WHERE user.username = ? AND song_id = ?"
 				+ " ORDER BY view.id DESC LIMIT 1";
 		try {
-			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {username, songId }, new ViewMapper());
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { username, songId },
+					new ViewMapper());
 			return (View) queryForObject;
 		} catch (Exception e) {
 			return null;
