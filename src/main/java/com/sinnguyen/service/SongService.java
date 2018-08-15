@@ -2,7 +2,9 @@ package com.sinnguyen.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sinnguyen.entities.Favorite;
 import com.sinnguyen.entities.Song;
+import com.sinnguyen.entities.View;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SongDTO;
 
@@ -12,4 +14,6 @@ public interface SongService {
 	ResponseModel userGetList(SongDTO searchDto);
 	ResponseModel userGetById(String username, int id);
 	ResponseModel getById(int id);
+	ResponseModel userViewSong(View view);
+	ResponseModel userFavoriteSong(Favorite favorite);
 }

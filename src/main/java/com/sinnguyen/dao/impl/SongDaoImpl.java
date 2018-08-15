@@ -57,7 +57,7 @@ public class SongDaoImpl implements SongDao {
 		sql.append(") AS favorites, false AS favorited, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
 				+ "INNER JOIN user WHERE song.owner_id = user.id");
 		if(searchDto.getKeyword()!=null) {
-			sql.append(" AND song.title LIKE '%"+searchDto.getKeyword()+"%'");
+			sql.append(" AND LOWER(song.title) LIKE '%"+searchDto.getKeyword().toLowerCase()+"%'");
 		}
 		if(searchDto.getStartDate()!=null) {
 			sql.append(" AND song.create_time > '"+MainUtility.dateToStringFormat(searchDto.getStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
@@ -120,6 +120,38 @@ public class SongDaoImpl implements SongDao {
 	}
 	
 	@Override
+	public void getCountList(SongDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(song.id) FROM song WHERE 1=1");
+
+		if(searchDto.getKeyword()!=null) {
+			sql.append(" AND LOWER(song.title) LIKE '%"+searchDto.getKeyword().toLowerCase()+"%'");
+		}
+		if(searchDto.getStartDate()!=null) {
+			sql.append(" AND song.create_time > '"+MainUtility.dateToStringFormat(searchDto.getStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		if(searchDto.getEndDate()!=null) {
+			sql.append(" AND song.create_time < '"+MainUtility.dateToStringFormat(searchDto.getEndDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		if(searchDto.getGenreId()!=null) {
+			sql.append(" AND song.genre_id = "+searchDto.getGenreId());
+		}
+		if(searchDto.getUserId()!=null) {
+			sql.append(" AND song.owner_id = "+searchDto.getUserId());
+		}
+		if(searchDto.getUsername()!=null) {
+			sql.append(" AND user.username LIKE '%"+searchDto.getUsername()+"%'");
+		}
+		try {
+			int results = this.jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			searchDto.setTotal(results);
+		} catch (Exception e) {
+			e.printStackTrace();
+			searchDto.setTotal(0);
+		}
+	}
+	
+	@Override
 	public List<Song> userGetList(User user, SongDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT song.id, song.title, song.image, song.url,"
@@ -137,7 +169,7 @@ public class SongDaoImpl implements SongDao {
 				+ "AS favorited, user.username AS owner_username, user.fullname AS owner_fullname, owner_id FROM song "
 				+ "INNER JOIN user WHERE song.owner_id = user.id");
 		if(searchDto.getKeyword()!=null) {
-			sql.append(" AND song.title LIKE '%"+searchDto.getKeyword()+"%'");
+			sql.append(" AND LOWER(song.title) LIKE '%"+searchDto.getKeyword().toLowerCase()+"%'");
 		}
 		if(searchDto.getStartDate()!=null) {
 			sql.append(" AND song.create_time > '"+MainUtility.dateToStringFormat(searchDto.getStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
@@ -186,7 +218,7 @@ public class SongDaoImpl implements SongDao {
 				song.setUrl((String)(row.get("url")));
 				song.setViews(Integer.parseInt(row.get("views").toString()));
 				song.setFavorites(Integer.parseInt(row.get("favorites").toString()));
-				song.setFavorited((Long)row.get("favorited")==0?false:true);
+				song.setFavorited(row.get("favorited").toString().equals("0")?false:true);
 				User u = new User();
 				u.setId((Integer)row.get("owner_id"));
 				u.setUsername((String)row.get("owner_username"));
@@ -196,6 +228,7 @@ public class SongDaoImpl implements SongDao {
 			}
 			return songs;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

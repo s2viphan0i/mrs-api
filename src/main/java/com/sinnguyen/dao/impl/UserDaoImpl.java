@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,8 +17,10 @@ import org.springframework.stereotype.Repository;
 
 import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.UserDao;
+import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.SearchDTO;
+import com.sinnguyen.model.UserDTO;
 import com.sinnguyen.model.UserMapper;
 import com.sinnguyen.util.MainUtility;
 import com.sinnguyen.util.PasswordGenerator;
@@ -105,11 +109,11 @@ public class UserDaoImpl implements UserDao {
 	public boolean editByUsername(User user) {
 		try {
 			String sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ?, avatar = ? WHERE username = ?";
-			Object[] newObj = new Object[] { user.getFullname(), MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
+			Object[] newObj = new Object[] { user.getFullname(), (user.getBirthdate()==null)?null:MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
 					user.getPhone(), user.getNote(), user.getAvatar(), user.getUsername() };
 			if(user.getAvatar()==null) {
 				sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ? WHERE username = ?";
-				newObj = new Object[] { user.getFullname(), MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
+				newObj = new Object[] { user.getFullname(), (user.getBirthdate()==null)?null:MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
 						user.getPhone(), user.getNote(), user.getUsername() };
 			}
 			
@@ -118,6 +122,7 @@ public class UserDaoImpl implements UserDao {
 				return true;
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return false;
 	}
@@ -158,9 +163,24 @@ public class UserDaoImpl implements UserDao {
 	}
 	
 	public User getUserbyUsername(String username) {
-		String sql = "SELECT * FROM user WHERE username = ?";
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers, "
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, false AS followed "
+				+ "FROM user WHERE username = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new UserMapper());
+			return (User) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public User userGetUserbyUsername(String username, int currentId) {
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers, "
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, "
+				+ "(SELECT EXISTS (SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id=?)) AS followed "
+				+ "FROM user WHERE username = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {currentId, username }, new UserMapper());
 			return (User) queryForObject;
 		} catch (Exception e) {
 			return null;
@@ -183,12 +203,132 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User getUserbyId(int id) {
-		String sql = "SELECT * FROM user WHERE id = ?";
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers,"
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings, false AS followed "
+				+ "FROM user WHERE id = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new UserMapper());
 			return (User) queryForObject;
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	@Override
+	public User userGetUserbyId(int id, int currentId) {
+		String sql = "SELECT user.*, (SELECT COUNT(id) FROM follow f WHERE user.id = f.following_id) AS followers,"
+				+ "(SELECT COUNT(id) FROM follow f WHERE user.id = f.follower_id) AS followings,"
+				+ "(SELECT EXISTS (SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id=?)) AS followed "
+				+ "FROM user WHERE id = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] {currentId, id }, new UserMapper());
+			return (User) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<User> userGetList(User user, UserDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT user.*, (SELECT COUNT(following_id) FROM follow f WHERE f.follower_id = user.id) AS followings, ");
+
+		sql.append("(SELECT COUNT(follower_id) FROM follow f WHERE f.following_id = user.id");
+		if(searchDto.getFollowStartDate()!=null&&searchDto.getFollowEndDate()!=null) {
+			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
+					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		sql.append(") AS followers, (SELECT exists(SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id = ?)) AS followed "
+				+ "FROM user WHERE 1=1");
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(user.fullname) LIKE ?");
+		if(searchDto.getSortField()!=null) {
+			if(searchDto.getSortField().equals("followers")) {
+				sql.append(" ORDER BY followers");
+			}
+		} else {
+			sql.append(" ORDER BY song.id");
+		}
+		if(searchDto.getSortOrder()!=null&&searchDto.getSortOrder().equals("descend")) {
+			sql.append(" DESC");
+		}
+		if(searchDto.getResults()==null) {
+			searchDto.setResults(10);
+		}
+		if(searchDto.getPage()==null) {
+			searchDto.setPage(1);
+		}
+		sql.append(" LIMIT "+searchDto.getResults()+" OFFSET "+(searchDto.getPage() - 1) * searchDto.getResults());
+		try {
+			List<User> users = this.jdbcTemplate.query(sql.toString(), new UserMapper(),user.getId(), "%"+searchDto.getKeyword().toLowerCase()+"%");
+			return users;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public List<User> getList(UserDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT user.*, (SELECT COUNT(following_id) FROM follow f WHERE f.follower_id = user.id) AS followings, ");
+
+		sql.append("(SELECT COUNT(follower_id) FROM follow f WHERE f.following_id = user.id");
+		if(searchDto.getFollowStartDate()!=null&&searchDto.getFollowEndDate()!=null) {
+			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
+					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		sql.append(") AS followers, 0 AS followed FROM user WHERE 1=1");
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(user.fullname) LIKE ?");
+		if(searchDto.getSortField()!=null) {
+			if(searchDto.getSortField().equals("followers")) {
+				sql.append(" ORDER BY followers");
+			}
+		} else {
+			sql.append(" ORDER BY song.id");
+		}
+		if(searchDto.getSortOrder()!=null&&searchDto.getSortOrder().equals("descend")) {
+			sql.append(" DESC");
+		}
+		if(searchDto.getResults()==null) {
+			searchDto.setResults(10);
+		}
+		if(searchDto.getPage()==null) {
+			searchDto.setPage(1);
+		}
+		sql.append(" LIMIT "+searchDto.getResults()+" OFFSET "+(searchDto.getPage() - 1) * searchDto.getResults());
+		try {
+			List<User> users = this.jdbcTemplate.query(sql.toString(), new UserMapper(), "%"+searchDto.getKeyword().toLowerCase()+"%");
+			return users;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public void getCountList(UserDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(user.id) FROM user WHERE 1=1");
+
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(user.fullname) LIKE ?");
+
+		try {
+			int results = this.jdbcTemplate.queryForObject(sql.toString(), Integer.class, "%"+searchDto.getKeyword().toLowerCase()+"%");
+			searchDto.setTotal(results);
+		} catch (Exception e) {
+			e.printStackTrace();
+			searchDto.setTotal(0);
 		}
 	}
 

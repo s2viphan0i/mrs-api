@@ -1,7 +1,9 @@
 package com.sinnguyen.dao;
 
+import com.sinnguyen.entities.Favorite;
+
 public interface FavoriteDao {
-	boolean checkFavorite(String username, int songId);
-	boolean addFavorite(String username, int songId);
-	boolean removeFavorite(String username, int songId);
+	boolean checkFavorite(Favorite favorite);
+	boolean addFavorite(Favorite favorite);
+	boolean removeFavorite(Favorite favorite);
 }
