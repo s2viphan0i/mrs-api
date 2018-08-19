@@ -11,6 +11,7 @@ public class UserDTO extends SearchDTO {
 	private Date followStartDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date followEndDate;
+	private boolean followed;
 	
 	public UserDTO() {
 		super();
@@ -30,6 +31,14 @@ public class UserDTO extends SearchDTO {
 
 	public void setFollowEndDate(Date followEndDate) {
 		this.followEndDate = followEndDate;
+	}
+
+	public boolean getFollowed() {
+		return followed;
+	}
+
+	public void setFollowed(boolean followed) {
+		this.followed = followed;
 	}
 
 }

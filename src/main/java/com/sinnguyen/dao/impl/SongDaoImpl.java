@@ -235,10 +235,9 @@ public class SongDaoImpl implements SongDao {
 
 	@Override
 	public Song getById(int id) {
-		String sql = "SELECT song.*, genre.name AS genre_name, user.username AS owner_name, user.fullname AS owner_fullname, "
-				+ "user.avatar AS owner_avatar, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
+		String sql = "SELECT song.*, genre.name AS genre_name, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
 				+ "(SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id) AS favorites, false AS favorited "
-				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id INNER JOIN user ON song.owner_id = user.id WHERE song.id = ?";
+				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id WHERE song.id = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new SongMapper());
 			return (Song) queryForObject;
@@ -248,11 +247,10 @@ public class SongDaoImpl implements SongDao {
 	}
 	
 	public Song userGetById(User user, int id) {
-		String sql = "SELECT song.*, genre.name AS genre_name, user.username AS owner_name, user.fullname AS owner_fullname, "
-				+ "user.avatar AS owner_avatar, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
+		String sql = "SELECT song.*, genre.name AS genre_name, (SELECT COUNT(user_id) FROM view v WHERE song.id = v.song_id) AS views, "
 				+ "(SELECT COUNT(user_id) FROM favorite f WHERE f.song_id = song.id) AS favorites, "
 				+ "(SELECT EXISTS (SELECT 1 FROM favorite f WHERE f.song_id = song.id AND f.user_id = ?)) AS favorited "
-				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id INNER JOIN user ON song.owner_id = user.id WHERE song.id = ?";
+				+ "FROM song INNER JOIN genre ON song.genre_id = genre.id WHERE song.id = ?";
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { user.getId(), id }, new SongMapper());
 			return (Song) queryForObject;

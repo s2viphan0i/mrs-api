@@ -83,6 +83,11 @@ public class UserController{
         return userService.doFollow(username, id);
     }
 	
+	@RequestMapping(value="/user/users/followings/list", method = RequestMethod.POST)
+	public ResponseModel userGetListFollowing(@RequestBody UserDTO searchDto) {
+		return userService.userGetListFollowing(searchDto);
+	}
+	
 	@RequestMapping(value="/user/users/list", method = RequestMethod.POST)
 	public ResponseModel userGetList(@RequestBody UserDTO searchDto) {
 		return userService.userGetList(searchDto);

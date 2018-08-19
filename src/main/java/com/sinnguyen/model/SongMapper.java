@@ -21,9 +21,6 @@ public class SongMapper implements RowMapper<Song> {
 		song.setGenre(genre);
 		User owner = new User();
 		owner.setId(rs.getInt("owner_id"));
-		owner.setAvatar(rs.getString("owner_avatar"));
-		owner.setUsername(rs.getString("owner_name"));
-		owner.setFullname(rs.getString("owner_fullname"));
 		song.setUser(owner);
 		song.setTitle(rs.getString("title"));
 		song.setUrl(rs.getString("url"));
