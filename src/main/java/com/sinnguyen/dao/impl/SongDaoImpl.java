@@ -258,6 +258,23 @@ public class SongDaoImpl implements SongDao {
 			return null;
 		}
 	}
-	
 
+	@Override
+	public List<Song> getSongbyPlaylistId(int playlistId) {
+		String sql = "SELECT song_id FROM playlist_song WHERE playlist_id = ?";
+		try {
+			List<Song> songs = new ArrayList<Song>();
+			List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString(), playlistId);
+			for (Map row : rows) {
+				Song song = new Song();
+				song.setId((Integer)(row.get("song_id")));
+				songs.add(song);
+			}
+			return songs;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }
