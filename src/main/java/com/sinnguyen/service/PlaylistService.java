@@ -10,4 +10,6 @@ public interface PlaylistService {
 	ResponseModel add(Playlist playlist, MultipartFile image);
 	ResponseModel getListbyAuth();
 	ResponseModel addSongtoPlaylist(Song song, int playlistId);
+	ResponseModel removeSongFromPlaylist(int songId, int playlistId);
+	ResponseModel getById(int id);
 }

@@ -8,7 +8,10 @@ import com.sinnguyen.model.PlaylistDTO;
 
 public interface PlaylistDao {
 	boolean add(Playlist playlist);
-	boolean checkSong(int songId, int playlistId);
+	boolean checkSonginPLaylist(Song song, Playlist playlistId);
+	boolean check(Playlist playlist);
 	boolean addSong(Song song, Playlist playlist);
+	boolean removeSong(Song song, Playlist playlist);
+	Playlist getById(int id);
 	List<Playlist> getList(PlaylistDTO searchDto);
 }

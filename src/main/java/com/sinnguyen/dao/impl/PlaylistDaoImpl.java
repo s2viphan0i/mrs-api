@@ -3,10 +3,8 @@ package com.sinnguyen.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,9 +18,9 @@ import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.PlaylistDao;
 import com.sinnguyen.entities.Playlist;
 import com.sinnguyen.entities.Song;
-import com.sinnguyen.entities.User;
 import com.sinnguyen.model.PlaylistDTO;
 import com.sinnguyen.model.PlaylistMapper;
+import com.sinnguyen.model.SongMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -116,10 +114,15 @@ public class PlaylistDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public boolean checkSong(int songId, int playlistId) {
-		String sql = "SELECT EXISTS (SELECT 1 FROM playlist_song WHERE playlist_id = ? AND song_id = ?)";
-		if (this.jdbcTemplate.queryForObject(sql, Integer.class, playlistId, songId) == 1) {
-			return true;
+	public boolean checkSonginPLaylist(Song song, Playlist playlist) {
+		try {
+			String sql = "SELECT EXISTS (SELECT 1 FROM playlist_song WHERE playlist_id = ? AND song_id = ?)";
+			if (this.jdbcTemplate.queryForObject(sql, Integer.class, playlist.getId(), song.getId()) == 1) {
+				return true;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -127,17 +130,59 @@ public class PlaylistDaoImpl implements PlaylistDao {
 	@Override
 	public boolean addSong(Song song, Playlist playlist) {
 		try {
-			String sql = "INSERT INTO playlist_song(playlist_id, song_id) "
-					+ "VALUES((SELECT id FROM playlist WHERE id = ?), (SELECT id FROM song WHERE id = ?))";
+			String sql = "INSERT INTO playlist_song(playlist_id, song_id) VALUES (?, ?)";
 			Object[] newObj = new Object[] {playlist.getId(), song.getId()};
 			int row = this.jdbcTemplate.update(sql, newObj);
 			if (row > 0) {
 				return true;
 			}
-		} catch (Exception ex) {
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public boolean check(Playlist playlist) {
+		try {
+			String sql = "SELECT EXISTS (SELECT 1 FROM playlist INNER JOIN user ON playlist.user_id = user.id "
+					+ "WHERE playlist.id = ? AND user.username = ?)";
+			if (this.jdbcTemplate.queryForObject(sql, Integer.class, playlist.getId(),
+					playlist.getUser().getUsername()) == 1) {
+				return true;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean removeSong(Song song, Playlist playlist) {
+		try {
+			String sql = "DELETE FROM playlist_song WHERE playlist_id = ? AND song_id = ?";
+			Object[] newObj = new Object[] {playlist.getId(), song.getId()};
+			int row = this.jdbcTemplate.update(sql, newObj);
+			if (row > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public Playlist getById(int id) {
+		String sql = "SELECT playlist.*, user.username, user.fullname FROM playlist INNER JOIN user ON playlist.user_id = user.id "
+				+ "WHERE playlist.id = ?";
+		try {
+			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new PlaylistMapper());
+			return (Playlist) queryForObject;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

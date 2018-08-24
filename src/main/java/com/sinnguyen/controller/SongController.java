@@ -27,9 +27,6 @@ public class SongController {
 	@Autowired
 	private SongService songService;
 	
-	@Autowired
-	private UserService userService;
-	
 	@RequestMapping(value="/user/songs", method = RequestMethod.POST)
 	public ResponseModel addSong(@RequestParam(value="file", required=false) MultipartFile file, 
 			@RequestParam(value="image", required=false) MultipartFile image, @RequestParam(value="song") String song) {

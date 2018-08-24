@@ -54,4 +54,14 @@ public class PlaylistController {
 		return playlistService.addSongtoPlaylist(song, playlistId);
 	}
 	
+	@RequestMapping(value="/user/playlists/{playlistId}/songs/{songId}", method = RequestMethod.DELETE)
+	public ResponseModel removeSongFromPlaylist(@PathVariable("playlistId") int playlistId, @PathVariable("songId") int songId) {
+		return playlistService.removeSongFromPlaylist(songId, playlistId);
+	}
+	
+	@RequestMapping(value="/playlists/{id}", method = RequestMethod.GET)
+	public ResponseModel getById(@PathVariable("id") int id) {
+		return playlistService.getById(id);
+	}
+	
 }
