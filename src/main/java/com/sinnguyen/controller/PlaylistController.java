@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinnguyen.entities.Playlist;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.model.PlaylistDTO;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.service.PlaylistService;
 
@@ -47,6 +48,11 @@ public class PlaylistController {
 	@RequestMapping(value="/user/playlists/list", method = RequestMethod.POST)
 	public ResponseModel getListbyAuth() {
 		return playlistService.getListbyAuth();
+	}
+	
+	@RequestMapping(value="/playlists/list", method = RequestMethod.POST)
+	public ResponseModel getList(@RequestBody PlaylistDTO searchDTO) {
+		return playlistService.getList(searchDTO);
 	}
 	
 	@RequestMapping(value="/user/playlists/{id}/songs", method = RequestMethod.POST)

@@ -160,4 +160,25 @@ public class PlaylistServiceImpl implements PlaylistService {
 		return result;
 	}
 
+	@Override
+	public ResponseModel getList(PlaylistDTO searchDto) {
+		ResponseModel result = new ResponseModel();
+		List<Playlist> playlists = playlistDao.getList(searchDto);
+		if (playlists == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (playlists.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm thấy playlist nào");
+		} else {
+			for(Playlist p: playlists) {
+				p.setSongs(songDao.getSongbyPlaylistId(p.getId()));
+			}
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setContent(playlists);
+		}
+		return result;
+	}
+
 }
