@@ -227,7 +227,77 @@ public class UserDaoImpl implements UserDao {
 			return null;
 		}
 	}
+	
+	@Override
+	public List<User> userGetListFollowing(User user, UserDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
 
+		sql.append("SELECT * FROM (SELECT user.*, (SELECT COUNT(following_id) FROM follow f WHERE f.follower_id = user.id) AS followings, ");
+
+		sql.append("(SELECT COUNT(follower_id) FROM follow f WHERE f.following_id = user.id");
+		if(searchDto.getFollowStartDate()!=null&&searchDto.getFollowEndDate()!=null) {
+			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
+					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		sql.append(") AS followers, (SELECT exists(SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id = ?)) AS followed "
+				+ "FROM user WHERE 1=1");
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(user.fullname) LIKE ?) AS T WHERE T.followed = 1");
+		if(searchDto.getSortField()!=null) {
+			if(searchDto.getSortField().equals("followers")) {
+				sql.append(" ORDER BY followers");
+			} else {
+				sql.append(" ORDER BY id");
+			}
+		} else {
+			sql.append(" ORDER BY id");
+		}
+		if(searchDto.getSortOrder()!=null&&searchDto.getSortOrder().equals("descend")) {
+			sql.append(" DESC");
+		}
+		if(searchDto.getResults()==null) {
+			searchDto.setResults(10);
+		}
+		if(searchDto.getPage()==null) {
+			searchDto.setPage(1);
+		}
+		sql.append(" LIMIT "+searchDto.getResults()+" OFFSET "+(searchDto.getPage() - 1) * searchDto.getResults());
+		try {
+			List<User> users = this.jdbcTemplate.query(sql.toString(), new UserMapper(), user.getId(), "%"+searchDto.getKeyword().toLowerCase()+"%");
+			return users;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	@Override
+	public void getCountListFollowing(User user, UserDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT COUNT(id) FROM (SELECT user.*, (SELECT COUNT(following_id) FROM follow f WHERE f.follower_id = user.id) AS followings, ");
+
+		sql.append("(SELECT COUNT(follower_id) FROM follow f WHERE f.following_id = user.id");
+		if(searchDto.getFollowStartDate()!=null&&searchDto.getFollowEndDate()!=null) {
+			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
+					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+		}
+		sql.append(") AS followers, (SELECT exists(SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id = ?)) AS followed "
+				+ "FROM user WHERE 1=1");
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(user.fullname) LIKE ?) AS T WHERE T.followed = 1");
+		try {
+			int results = this.jdbcTemplate.queryForObject(sql.toString(), Integer.class, user.getId(), "%"+searchDto.getKeyword().toLowerCase()+"%");
+			searchDto.setTotal(results);
+		} catch (Exception e) {
+			e.printStackTrace();
+			searchDto.setTotal(0);
+		}
+	}
+	
 	@Override
 	public List<User> userGetList(User user, UserDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
@@ -248,9 +318,11 @@ public class UserDaoImpl implements UserDao {
 		if(searchDto.getSortField()!=null) {
 			if(searchDto.getSortField().equals("followers")) {
 				sql.append(" ORDER BY followers");
+			} else {
+				sql.append(" ORDER BY user.id");
 			}
 		} else {
-			sql.append(" ORDER BY song.id");
+			sql.append(" ORDER BY user.id");
 		}
 		if(searchDto.getSortOrder()!=null&&searchDto.getSortOrder().equals("descend")) {
 			sql.append(" DESC");

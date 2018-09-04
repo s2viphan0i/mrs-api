@@ -13,7 +13,10 @@ public class Playlist implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int id;
 	private String title;
+	private String image;
+	private User user;
 	private List<Song> songs;
+	private int songsCount;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date createTime;
 	private Boolean type;
@@ -60,6 +63,30 @@ public class Playlist implements Serializable {
 
 	public void setType(Boolean type) {
 		this.type = type;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public int getSongsCount() {
+		return songsCount;
+	}
+
+	public void setSongsCount(int songsCount) {
+		this.songsCount = songsCount;
 	}
 
 }

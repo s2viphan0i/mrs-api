@@ -54,11 +54,26 @@ public class CommentServiceImpl implements CommentService {
 		comment.setUser(user);
 		Song song = songDao.getById(songId);
 		if (song != null) {
-			commentDao.addComment(song, comment);
+			commentDao.add(song, comment);
 			result.setSuccess(true);
 			result.setMsg("Bình luận bài hát thành công");
 			result.setContent(comment);
 
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
+	}
+	
+	@Override
+	public ResponseModel delete(Comment comment) {
+		ResponseModel result = new ResponseModel();
+		User user = userDao.getUserbyUsername(comment.getUser().getUsername());
+		comment.setUser(user);
+		if(commentDao.delete(comment)){
+			result.setSuccess(true);
+			result.setMsg("Xóa bình luận bài hát thành công");
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");

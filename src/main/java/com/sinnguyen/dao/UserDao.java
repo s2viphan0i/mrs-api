@@ -23,7 +23,9 @@ public interface UserDao {
 	User getUserbyId(int id);
 	User userGetUserbyId(int id, int currentId);
 	boolean changePassword(User user);
+	List<User> userGetListFollowing(User user, UserDTO userDto);
 	List<User> userGetList(User user, UserDTO userDto);
 	List<User> getList(UserDTO userDto);
+	void getCountListFollowing(User user, UserDTO searchDto);
 	void getCountList(UserDTO userDto);
 }

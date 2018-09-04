@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sinnguyen.entities.Comment;
@@ -28,6 +27,18 @@ public class CommentController {
 		return commentService.getBySongId(id, searchDto);
 	}
 
+	@RequestMapping(value = "/user/comments/{id}", method = RequestMethod.DELETE)
+	public ResponseModel deleteComment(@PathVariable("id") int id) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = new User(); 
+		user.setUsername(username);
+		Comment comment = new Comment();
+		comment.setId(id);
+		comment.setUser(user);
+		return commentService.delete(comment);
+	}
+	
 	@RequestMapping(value = "/user/songs/{id}/comments", method = RequestMethod.POST)
 	public ResponseModel userViewSong(@PathVariable("id") int id, @RequestBody Comment comment) {
 		SecurityContext context = SecurityContextHolder.getContext();

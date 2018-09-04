@@ -247,7 +247,7 @@ public class UserServiceImpl implements UserService {
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		} else if(users.isEmpty()) {
 			result.setSuccess(true);
-			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setMsg("Không tìm được người dùng phù hợp");
 			result.setTotal(0);
 		} else {
 			result.setSuccess(true);
@@ -268,7 +268,31 @@ public class UserServiceImpl implements UserService {
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
 		} else if(users.isEmpty()) {
 			result.setSuccess(true);
-			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setMsg("Không tìm được người dùng phù hợp");
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
+			result.setContent(users);
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userGetListFollowing(UserDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<User> users = userDao.userGetListFollowing(user, searchDto);
+		userDao.getCountListFollowing(user, searchDto);
+		if(users==null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if(users.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được người dùng phù hợp");
+			result.setTotal(0);
 		} else {
 			result.setSuccess(true);
 			result.setMsg("Lấy dữ liệu thành công");

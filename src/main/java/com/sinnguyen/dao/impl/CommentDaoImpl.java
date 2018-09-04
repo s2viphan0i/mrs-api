@@ -53,7 +53,7 @@ public class CommentDaoImpl implements CommentDao {
 	}
 
 	@Override
-	public boolean addComment(final Song song, final Comment comment) {
+	public boolean add(final Song song, final Comment comment) {
 		final String sql = "INSERT INTO comment(user_id, song_id, content, create_time) VALUES (?, ?, ?, ?)";
 		try {
 			comment.setCreateTime(new Date());
@@ -88,6 +88,20 @@ public class CommentDaoImpl implements CommentDao {
 			e.printStackTrace();
 			searchDto.setTotal(0);
 		}
+	}
+
+	@Override
+	public boolean delete(Comment comment) {
+		String sql = "DELETE FROM comment WHERE comment.id = ? AND comment.user_id = ?";
+		try {
+			int row = this.jdbcTemplate.update(sql, comment.getId(), comment.getUser().getId());
+			if(row>0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

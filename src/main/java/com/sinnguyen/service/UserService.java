@@ -19,6 +19,7 @@ public interface UserService {
 	ResponseModel activate(String code);
 	ResponseModel editByUsername(User user, MultipartFile file);
 	ResponseModel doFollow(String username, int userId);
+	ResponseModel userGetListFollowing(UserDTO searchDto);
 	ResponseModel userGetList(UserDTO searchDto);
 	ResponseModel getList(UserDTO searchDto);
 }

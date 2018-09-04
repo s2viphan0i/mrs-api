@@ -98,6 +98,7 @@ public class MainUtility {
 			result = filename;
 			ImageIO.write(image, extFile, outputfile);
 		} catch (Exception ie) {
+			ie.printStackTrace();
 			return null;
 		}
 		return result;

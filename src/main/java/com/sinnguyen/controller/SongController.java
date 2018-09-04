@@ -3,6 +3,7 @@ package com.sinnguyen.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,16 +20,13 @@ import com.sinnguyen.entities.View;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.SongDTO;
 import com.sinnguyen.service.SongService;
-import com.sinnguyen.service.UserService;
 
+@CrossOrigin
 @RestController
 public class SongController {
 	
 	@Autowired
 	private SongService songService;
-	
-	@Autowired
-	private UserService userService;
 	
 	@RequestMapping(value="/user/songs", method = RequestMethod.POST)
 	public ResponseModel addSong(@RequestParam(value="file", required=false) MultipartFile file, 
