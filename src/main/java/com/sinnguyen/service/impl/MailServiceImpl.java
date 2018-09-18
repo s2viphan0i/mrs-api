@@ -46,7 +46,7 @@ public class MailServiceImpl implements MailService {
 			mimeMessageHelper.setText(content, true);
 			mailSender.send(mimeMessageHelper.getMimeMessage());
 		} catch (MessagingException e) {
-				
+			e.printStackTrace();
 		}
 	}
 
