@@ -11,12 +11,5 @@ import com.sinnguyen.service.UserService;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-
-	@Autowired
-	private UserService userService;
-
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public ResponseModel login() {	
-		return userService.getAllUser();
-	}
+	
 }

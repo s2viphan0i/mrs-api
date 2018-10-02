@@ -71,6 +71,11 @@ public class SongController {
 		return songService.getById(id);
 	}
 	
+	@RequestMapping(value="/songs/{id}/recommends", method = RequestMethod.GET)
+	public ResponseModel getRecommendations(@PathVariable("id") int id) {
+		return songService.getRecommendations(id);
+	}
+	
 	@RequestMapping(value="/user/songs/{id}/views", method = RequestMethod.POST)
 	public ResponseModel userViewSong(@PathVariable("id") int id) {
 		SecurityContext context = SecurityContextHolder.getContext();

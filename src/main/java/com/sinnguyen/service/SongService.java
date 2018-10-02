@@ -16,4 +16,5 @@ public interface SongService {
 	ResponseModel getById(int id);
 	ResponseModel userViewSong(View view);
 	ResponseModel userFavoriteSong(Favorite favorite);
+	ResponseModel getRecommendations(int id);
 }
