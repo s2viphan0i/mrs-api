@@ -2,6 +2,16 @@ package com.sinnguyen.service.impl;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
+import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLBooleanPrefJDBCDataModel;
+import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLJDBCDataModel;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
+import org.apache.mahout.cf.taste.model.JDBCDataModel;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +45,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	FollowDao followDao;
-
+	
+	@Autowired
+	DataSource dataSource;
+	
 	public ResponseModel add(User user) {
 		ResponseModel result = new ResponseModel();
 		if (user.getUsername() == null || user.getUsername().equals("") || user.getPassword() == null

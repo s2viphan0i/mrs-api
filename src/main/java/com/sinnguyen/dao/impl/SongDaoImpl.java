@@ -337,4 +337,27 @@ public class SongDaoImpl implements SongDao {
 		}
 	}
 
+	@Override
+	public List<Song> getListRecommendation(int id) {
+		String sql = "SELECT song.*, user.username AS owner_username, user.fullname AS owner_fullname FROM song "
+				+ "INNER JOIN user ON song.owner_id = user.id LEFT JOIN recommendation ON song.id = recommendation.r_song_id "
+				+ "WHERE recommendation.song_id = "+id+"";
+		List<Song> songs = new ArrayList<Song>();
+		List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString());
+		for (Map row : rows) {
+			Song song = new Song();
+			song.setId((Integer) (row.get("id")));
+			song.setTitle((String) (row.get("title")));
+			song.setImage((String) (row.get("image")));
+			song.setUrl((String) (row.get("url")));
+			User user = new User();
+			user.setId((Integer) row.get("owner_id"));
+			user.setUsername((String) row.get("owner_username"));
+			user.setFullname((String) (row.get("owner_fullname")));
+			song.setUser(user);
+			songs.add(song);
+		}
+		return songs;
+	}
+
 }

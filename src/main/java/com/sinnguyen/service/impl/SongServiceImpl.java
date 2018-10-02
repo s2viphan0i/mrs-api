@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.GenreDao;
+import com.sinnguyen.dao.RecommendationDao;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.dao.ViewDao;
@@ -38,6 +39,9 @@ public class SongServiceImpl implements SongService {
 
 	@Autowired
 	private ViewDao viewDao;
+	
+	@Autowired
+	private RecommendationDao recommendationDao;
 
 	@Autowired
 	private FavoriteDao favoriteDao;
@@ -201,6 +205,25 @@ public class SongServiceImpl implements SongService {
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel getRecommendations(int id) {
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.getListRecommendation(id);
+		if (songs == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(songs.size());
+			result.setContent(songs);
 		}
 		return result;
 	}

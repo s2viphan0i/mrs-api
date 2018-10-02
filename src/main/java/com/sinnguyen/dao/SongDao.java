@@ -13,6 +13,7 @@ public interface SongDao {
 	List<Song> userGetList(User user, SongDTO searchDto);
 	List<Song> getSongbyPlaylistId(int playlistId);
 	List<Song> getSongDetailbyPlaylistId(int playlistId);
+	List<Song> getListRecommendation(int id);
 	void getCountList(SongDTO searchDto);
 	Song getById(int id);
 	Song userGetById(User user, int id);
