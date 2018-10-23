@@ -10,6 +10,8 @@ import com.sinnguyen.model.SongDTO;
 
 public interface SongService {
 	ResponseModel add(Song song, MultipartFile file, MultipartFile image);
+	ResponseModel edit(Song song, MultipartFile image);
+	ResponseModel delete(Song song);
 	ResponseModel getList(SongDTO searchDto);
 	ResponseModel userGetList(SongDTO searchDto);
 	ResponseModel userGetById(String username, int id);

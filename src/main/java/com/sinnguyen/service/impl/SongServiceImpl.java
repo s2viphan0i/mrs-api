@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.GenreDao;
-import com.sinnguyen.dao.RecommendationDao;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.dao.ViewDao;
@@ -39,9 +39,6 @@ public class SongServiceImpl implements SongService {
 
 	@Autowired
 	private ViewDao viewDao;
-	
-	@Autowired
-	private RecommendationDao recommendationDao;
 
 	@Autowired
 	private FavoriteDao favoriteDao;
@@ -75,6 +72,39 @@ public class SongServiceImpl implements SongService {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 			}
+		}
+		return result;
+	}
+	
+	@Override
+	public ResponseModel edit(Song song, MultipartFile image) {
+		ResponseModel result = new ResponseModel();
+		if (song.getGenre() == null || song.getGenre().getId() == 0 || song.getTitle() == null
+				|| song.getTitle().equals("")) {
+			result.setSuccess(false);
+			result.setMsg("Thông tin bài hát không hợp lệ");
+		} else if(songDao.checkOwner(song)) {
+			Genre genre = genreDao.getById(song.getGenre().getId());
+			if (genre == null) {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+				return result;
+			}
+			song.setGenre(genre);
+			if(image != null && image.getContentType().matches("image\\/?\\w+")) {
+				String imageurl = MainUtility.saveSquareImage(image);
+				song.setImage(imageurl);
+			}
+			if (songDao.edit(song)) {
+				result.setSuccess(true);
+				result.setMsg("Sửa bài hát thành công");
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+			}
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 		}
 		return result;
 	}
@@ -224,6 +254,24 @@ public class SongServiceImpl implements SongService {
 			result.setMsg("Lấy dữ liệu thành công");
 			result.setTotal(songs.size());
 			result.setContent(songs);
+		}
+		return result;
+	}
+
+	@Transactional
+	@Override
+	public ResponseModel delete(Song song) {
+		ResponseModel result = new ResponseModel();
+		Favorite favorite = new Favorite();
+		favorite.setSong(song);
+		View view = new View();
+		view.setSong(song);
+		if(songDao.checkOwner(song)&&songDao.delete(song)&&favoriteDao.delete(favorite)&&viewDao.delete(view)) {
+			result.setSuccess(true);
+			result.setMsg("Xóa bài hát thành công");
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 		}
 		return result;
 	}

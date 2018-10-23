@@ -49,5 +49,18 @@ public class FavoriteDaoImpl implements FavoriteDao {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean delete(Favorite favorite) {
+		try {
+			String sql = "DELETE FROM favorite WHERE song_id = ?";
+			if (this.jdbcTemplate.update(sql, new Object[] {favorite.getSong().getId()}) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

@@ -11,7 +11,7 @@ public interface UserService {
 	ResponseModel delete(User user);
 	ResponseModel getAllUser();
 	
-	ResponseModel login(User user);
+	ResponseModel login();
 	ResponseModel getById(int id);
 	ResponseModel userGetById(int id, String currentUsername);
 	ResponseModel getByUsername(String username);

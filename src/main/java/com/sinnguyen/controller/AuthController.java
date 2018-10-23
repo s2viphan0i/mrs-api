@@ -32,9 +32,9 @@ public class AuthController {
 	@Autowired
 	private MailService mailService;
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ResponseModel login(@RequestBody User user) {
-		return userService.login(user);
+	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
+	public ResponseModel login() {
+		return userService.login();
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)

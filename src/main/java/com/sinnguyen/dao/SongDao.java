@@ -8,7 +8,10 @@ import com.sinnguyen.model.SongDTO;
 
 public interface SongDao {
 	boolean add(Song song);
+	boolean edit(Song song);
+	boolean delete(Song song);
 	boolean check(Song song);
+	boolean checkOwner(Song song);
 	List<Song> getList(SongDTO searchDto);
 	List<Song> userGetList(User user, SongDTO searchDto);
 	List<Song> getSongbyPlaylistId(int playlistId);

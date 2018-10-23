@@ -133,32 +133,15 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
-	public ResponseModel login(User user) {
+	public ResponseModel login() {
 		ResponseModel result = new ResponseModel();
-		if(user.getUsername()==null||user.getUsername().equals("")||user.getPassword()==null||user.getPassword().equals("")) {
-			result.setSuccess(false);
-			result.setMsg("Tên đăng nhập hoặc mật khẩu không được rỗng");
-			return result;
-		}
-		User u = userDao.getUserbyUsername(user.getUsername());
-		if (u!=null) {
-			if (BCrypt.checkpw(user.getPassword(), u.getPassword())) {
-				if (u.isActivated()) {
-					result.setSuccess(true);
-					result.setMsg("Đăng nhập thành công");
-					result.setContent(u);
-				} else {
-					result.setSuccess(false);
-					result.setMsg("Tài khoản chưa được kích hoạt");
-				}
-			} else {
-				result.setSuccess(false);
-				result.setMsg("Sai tên đăng nhập hoặc mật khẩu");
-			}
-		} else {
-			result.setSuccess(false);
-			result.setMsg("Sai tên đăng nhập hoặc mật khẩu");
-		}
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User u = userDao.getUserbyUsername(username);
+		result.setSuccess(true);
+		result.setMsg("Đăng nhập thành công");
+		result.setContent(u);
+		
 		return result;
 	}
 	

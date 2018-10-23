@@ -29,7 +29,7 @@ public class RecommendationServiceImp implements RecommendationService {
 	RecommendationDao recommendationDao;
 	
 	@Override
-	@Scheduled(fixedRate = 86400000)
+	//@Scheduled(fixedRate = 86400000)
 	public ResponseModel getRecommend() {
 		try {
 			JDBCDataModel dm = new MySQLBooleanPrefJDBCDataModel(dataSource, "favorite","user_id", "song_id", "timestamp");
