@@ -1,7 +1,5 @@
 package com.sinnguyen.dao.impl;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -44,6 +42,19 @@ public class ViewDaoImpl implements ViewDao {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public boolean delete(View view) {
+		try {
+			String sql = "DELETE FROM view WHERE song_id = ?";
+			if (this.jdbcTemplate.update(sql, new Object[] {view.getSong().getId()}) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

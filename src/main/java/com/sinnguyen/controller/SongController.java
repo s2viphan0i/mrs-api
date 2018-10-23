@@ -49,6 +49,48 @@ public class SongController {
 		}
 	}
 	
+	@RequestMapping(value="/user/songs/{id}", method = RequestMethod.PUT)
+	public ResponseModel editSong(@PathVariable("id") int id, @RequestParam(value="image", required=false) MultipartFile image, @RequestParam(value="song") String song) {
+		ResponseModel result = new ResponseModel();
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Song s = mapper.readValue(song, Song.class);
+			User u = new User();
+			u.setUsername(username);
+			s.setUser(u);
+			s.setId(id);
+			return songService.edit(s, image);
+		} catch (Exception ex) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			ex.printStackTrace();
+			return result;
+		}
+	}
+	
+	@RequestMapping(value="/user/songs/{id}", method = RequestMethod.DELETE)
+	public ResponseModel deleteSong(@PathVariable("id") int id) {
+		ResponseModel result = new ResponseModel();
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Song s = new Song();
+			User u = new User();
+			u.setUsername(username);
+			s.setUser(u);
+			s.setId(id);
+			return songService.delete(s);
+		} catch (Exception ex) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			ex.printStackTrace();
+			return result;
+		}
+	}
+	
 	@RequestMapping(value="/songs/list", method = RequestMethod.POST)
 	public ResponseModel getList(@RequestBody SongDTO searchDto) {
 		return songService.getList(searchDto);

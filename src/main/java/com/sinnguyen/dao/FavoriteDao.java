@@ -6,4 +6,5 @@ public interface FavoriteDao {
 	boolean checkFavorite(Favorite favorite);
 	boolean addFavorite(Favorite favorite);
 	boolean removeFavorite(Favorite favorite);
+	boolean delete(Favorite favorite);
 }

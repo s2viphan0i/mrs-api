@@ -310,6 +310,20 @@ public class SongDaoImpl implements SongDao {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean checkOwner(Song song) {
+		try {
+			String sql = "SELECT EXISTS (SELECT 1 FROM song INNER JOIN user ON song.owner_id = user.id "
+					+ "WHERE song.id = ? AND user.username = ?)";
+			if (this.jdbcTemplate.queryForObject(sql, Integer.class, song.getId(), song.getUser().getUsername()) == 1) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	@Override
 	public List<Song> getSongDetailbyPlaylistId(int playlistId) {
@@ -339,9 +353,11 @@ public class SongDaoImpl implements SongDao {
 
 	@Override
 	public List<Song> getListRecommendation(int id) {
-		String sql = "SELECT song.*, user.username AS owner_username, user.fullname AS owner_fullname FROM song "
-				+ "INNER JOIN user ON song.owner_id = user.id LEFT JOIN recommendation ON song.id = recommendation.r_song_id "
-				+ "WHERE recommendation.song_id = "+id+"";
+		String sql = "SELECT s1.*, IF(s1.owner_id=s2.owner_id, 1, 0) AS owner_diff, IF(s1.genre_id=s2.genre_id, 1, 0) AS genre_diff, "
+				+ "recommendation.similarity, user.username AS owner_username, user.fullname AS owner_fullname FROM recommendation "
+				+ "RIGHT JOIN song AS s1 ON recommendation.r_song_id = s1.id INNER JOIN user ON s1.owner_id = user.id "
+				+ "INNER JOIN song AS s2 ON recommendation.song_id = s2.id WHERE recommendation.song_id = "+id
+				+ " ORDER BY recommendation.similarity DESC, owner_diff DESC, genre_diff DESC";
 		List<Song> songs = new ArrayList<Song>();
 		List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString());
 		for (Map row : rows) {
@@ -358,6 +374,40 @@ public class SongDaoImpl implements SongDao {
 			songs.add(song);
 		}
 		return songs;
+	}
+
+	@Override
+	public boolean edit(Song song) {
+		try {
+			String sql = "";
+			Object[] o = new Object[] {};
+			if(song.getImage()==null) {
+				sql = "UPDATE song SET song.title = ?, song.lyric = ?, song.genre_id = ? WHERE song.id = ?";
+				o = new Object[] { song.getTitle(), song.getLyric(), song.getGenre().getId(), song.getId() };
+			} else {
+				sql = "UPDATE song SET song.title = ?, song.lyric = ?, song.genre_id = ?, song.image = ? WHERE song.id = ?";
+				o = new Object[] { song.getTitle(), song.getLyric(), song.getGenre().getId(), song.getImage(), song.getId() };
+			}
+			if (this.jdbcTemplate.update(sql, o) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean delete(Song song) {
+		try {
+			String sql = "DELETE FROM song WHERE song.id = ?";
+			if (this.jdbcTemplate.update(sql, new Object[] {song.getId()}) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }
