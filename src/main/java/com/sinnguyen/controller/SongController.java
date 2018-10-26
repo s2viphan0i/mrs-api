@@ -101,6 +101,16 @@ public class SongController {
 		return songService.userGetList(searchDto);
 	}
 	
+	@RequestMapping(value="/user/songs/following/list", method = RequestMethod.POST)
+	public ResponseModel userGetFollowingList(@RequestBody SongDTO searchDto) {
+		return songService.userGetFollowingList(searchDto);
+	}
+	
+	@RequestMapping(value="/user/songs/favorite/list", method = RequestMethod.POST)
+	public ResponseModel userGetFavoriteList(@RequestBody SongDTO searchDto) {
+		return songService.userGetFavoriteList(searchDto);
+	}
+	
 	@RequestMapping(value="/user/songs/{id}", method = RequestMethod.GET)
 	public ResponseModel userGetById(@PathVariable("id") int id) {
 		SecurityContext context = SecurityContextHolder.getContext();

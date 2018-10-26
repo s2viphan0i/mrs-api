@@ -276,4 +276,50 @@ public class SongServiceImpl implements SongService {
 		return result;
 	}
 
+	@Override
+	public ResponseModel userGetFollowingList(SongDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.userGetFollowingList(user, searchDto);
+		if (songs == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setTotal(0);
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(0);
+			result.setContent(songs);
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userGetFavoriteList(SongDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.userGetFavoriteList(user, searchDto);
+		if (songs == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
+			result.setTotal(0);
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(0);
+			result.setContent(songs);
+		}
+		return result;
+	}
+
 }

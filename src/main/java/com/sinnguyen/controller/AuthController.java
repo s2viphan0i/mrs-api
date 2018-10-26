@@ -1,15 +1,15 @@
 package com.sinnguyen.controller;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.boot.autoconfigure.cache.CacheProperties.Redis;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sinnguyen.entities.Forgot;
@@ -18,6 +18,8 @@ import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.service.ForgotService;
 import com.sinnguyen.service.MailService;
 import com.sinnguyen.service.UserService;
+
+import redis.clients.jedis.Jedis;
 
 @RestController
 @RequestMapping("/")
@@ -67,14 +69,12 @@ public class AuthController {
 		return forgotService.resetPassword(forgot);
 	}
 	
-	@RequestMapping(value = "/signoff", method = RequestMethod.GET)
-	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            cookie.setMaxAge(0);
-            cookie.setValue(null);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        }
+	@RequestMapping(value = "/signout", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public void logout(@RequestParam String token) {
+//		System.out.println(token);
+//		Jedis jedis = new Jedis("localhost");
+//		jedis.del(token);
+//		jedis.close();
 	}
 }

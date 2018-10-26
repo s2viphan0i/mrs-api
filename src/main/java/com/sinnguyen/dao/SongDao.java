@@ -14,6 +14,8 @@ public interface SongDao {
 	boolean checkOwner(Song song);
 	List<Song> getList(SongDTO searchDto);
 	List<Song> userGetList(User user, SongDTO searchDto);
+	List<Song> userGetFollowingList(User user, SongDTO searchDto);
+	List<Song> userGetFavoriteList(User user, SongDTO searchDto);
 	List<Song> getSongbyPlaylistId(int playlistId);
 	List<Song> getSongDetailbyPlaylistId(int playlistId);
 	List<Song> getListRecommendation(int id);

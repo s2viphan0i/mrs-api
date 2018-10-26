@@ -17,7 +17,8 @@ public class SpringConfig {
                 registry.addMapping("/**")
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
                         .allowCredentials(true)
-                        .allowedOrigins("http://localhost", "http://172.16.3.69");
+                        .allowedOrigins("http://localhost", "http://172.16.3.69")
+                        .exposedHeaders("X-Auth-Token");
             }
         };
     }
