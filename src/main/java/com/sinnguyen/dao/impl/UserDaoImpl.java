@@ -232,22 +232,21 @@ public class UserDaoImpl implements UserDao {
 	public List<User> userGetListFollowing(User user, UserDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("SELECT * FROM (SELECT user.*, (SELECT COUNT(following_id) FROM follow f WHERE f.follower_id = user.id) AS followings, ");
+		sql.append("SELECT *, 0 AS followers, 0 AS followings, 1 AS followed FROM user INNER JOIN follow ON follow.following_id = user.id WHERE follow.follower_id = ?");
 
-		sql.append("(SELECT COUNT(follower_id) FROM follow f WHERE f.following_id = user.id");
 		if(searchDto.getFollowStartDate()!=null&&searchDto.getFollowEndDate()!=null) {
-			sql.append(" AND f.timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
-					+ "AND f.timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
+			sql.append(" AND timestamp<'"+MainUtility.dateToStringFormat(searchDto.getFollowEndDate(), "yyyy-MM-dd HH:mm:ss")+"' "
+					+ "AND timestamp>'"+MainUtility.dateToStringFormat(searchDto.getFollowStartDate(), "yyyy-MM-dd HH:mm:ss")+"'");
 		}
-		sql.append(") AS followers, (SELECT exists(SELECT 1 FROM follow f WHERE f.following_id = user.id AND f.follower_id = ?)) AS followed "
-				+ "FROM user WHERE 1=1");
 		if(searchDto.getKeyword()==null) {
 			searchDto.setKeyword("");
 		}
-		sql.append(" AND LOWER(user.fullname) LIKE ?) AS T WHERE T.followed = 1");
+		sql.append(" AND LOWER(user.fullname) LIKE ?");
 		if(searchDto.getSortField()!=null) {
 			if(searchDto.getSortField().equals("followers")) {
 				sql.append(" ORDER BY followers");
+			} else if(searchDto.getSortField().equals("timestamp")) {
+				sql.append(" ORDER BY timestamp");
 			} else {
 				sql.append(" ORDER BY id");
 			}

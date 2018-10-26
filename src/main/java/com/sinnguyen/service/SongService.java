@@ -14,6 +14,8 @@ public interface SongService {
 	ResponseModel delete(Song song);
 	ResponseModel getList(SongDTO searchDto);
 	ResponseModel userGetList(SongDTO searchDto);
+	ResponseModel userGetFollowingList(SongDTO songDto);
+	ResponseModel userGetFavoriteList(SongDTO songDto);
 	ResponseModel userGetById(String username, int id);
 	ResponseModel getById(int id);
 	ResponseModel userViewSong(View view);
