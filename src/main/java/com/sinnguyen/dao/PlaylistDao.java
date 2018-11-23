@@ -14,4 +14,5 @@ public interface PlaylistDao {
 	boolean removeSong(Song song, Playlist playlist);
 	Playlist getById(int id);
 	List<Playlist> getList(PlaylistDTO searchDto);
+	void getCountList(PlaylistDTO searchDto);
 }

@@ -17,7 +17,7 @@ import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.CommentDao;
 import com.sinnguyen.entities.Comment;
 import com.sinnguyen.entities.Song;
-import com.sinnguyen.model.CommentMapper;
+import com.sinnguyen.mapper.CommentMapper;
 import com.sinnguyen.model.SearchDTO;
 import com.sinnguyen.util.MainUtility;
 import com.sinnguyen.util.PasswordGenerator;

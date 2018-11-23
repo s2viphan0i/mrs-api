@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.sinnguyen.dao.ForgotDao;
 import com.sinnguyen.entities.Forgot;
 import com.sinnguyen.entities.User;
-import com.sinnguyen.model.UserMapper;
+import com.sinnguyen.mapper.UserMapper;
 
 @Repository
 public class ForgotDaoImpl implements ForgotDao {

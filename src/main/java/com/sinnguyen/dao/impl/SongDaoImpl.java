@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.mapper.SongMapper;
 import com.sinnguyen.model.SongDTO;
-import com.sinnguyen.model.SongMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -78,8 +78,8 @@ public class SongDaoImpl implements SongDao {
 		if (searchDto.getUserId() != null) {
 			sql.append(" AND song.owner_id = " + searchDto.getUserId());
 		}
-		if (searchDto.getUsername() != null) {
-			sql.append(" AND user.username LIKE '%" + searchDto.getUsername() + "%'");
+		if (searchDto.getFullname() != null) {
+			sql.append(" AND user.fullname LIKE '%" + searchDto.getFullname() + "%'");
 		}
 		if (searchDto.getSortField() != null) {
 			if (searchDto.getSortField().equals("views")) {
@@ -149,8 +149,8 @@ public class SongDaoImpl implements SongDao {
 		if (searchDto.getUserId() != null) {
 			sql.append(" AND song.owner_id = " + searchDto.getUserId());
 		}
-		if (searchDto.getUsername() != null) {
-			sql.append(" AND user.username LIKE '%" + searchDto.getUsername() + "%'");
+		if (searchDto.getFullname() != null) {
+			sql.append(" AND user.fullname LIKE '%" + searchDto.getFullname() + "%'");
 		}
 		try {
 			int results = this.jdbcTemplate.queryForObject(sql.toString(), Integer.class);
@@ -200,14 +200,16 @@ public class SongDaoImpl implements SongDao {
 		if (searchDto.getUserId() != null) {
 			sql.append(" AND song.owner_id = " + searchDto.getUserId());
 		}
-		if (searchDto.getUsername() != null) {
-			sql.append(" AND user.username LIKE '%" + searchDto.getUsername() + "%'");
+		if (searchDto.getFullname() != null) {
+			sql.append(" AND user.fullname LIKE '%" + searchDto.getFullname() + "%'");
 		}
 		if (searchDto.getSortField() != null) {
 			if (searchDto.getSortField().equals("views")) {
 				sql.append(" ORDER BY views");
 			} else if (searchDto.getSortField().equals("favorites")) {
 				sql.append(" ORDER BY favorites");
+			} else if (searchDto.getSortField().equals("title")) {
+				sql.append(" ORDER BY song.title");
 			} else if (searchDto.getSortField().equals("create_time")) {
 				sql.append(" ORDER BY song.create_time");
 			} else {

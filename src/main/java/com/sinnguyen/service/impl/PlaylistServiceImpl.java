@@ -164,6 +164,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 	public ResponseModel getList(PlaylistDTO searchDto) {
 		ResponseModel result = new ResponseModel();
 		List<Playlist> playlists = playlistDao.getList(searchDto);
+		playlistDao.getCountList(searchDto);
 		if (playlists == null) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
@@ -177,6 +178,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 			result.setSuccess(true);
 			result.setMsg("Lấy dữ liệu thành công");
 			result.setContent(playlists);
+			result.setTotal(searchDto.getTotal());
 		}
 		return result;
 	}

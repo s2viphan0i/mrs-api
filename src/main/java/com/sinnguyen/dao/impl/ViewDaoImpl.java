@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.sinnguyen.dao.ViewDao;
 import com.sinnguyen.entities.View;
-import com.sinnguyen.model.ViewMapper;
+import com.sinnguyen.mapper.ViewMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -43,14 +43,13 @@ public class ViewDaoImpl implements ViewDao {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public boolean delete(View view) {
 		try {
 			String sql = "DELETE FROM view WHERE song_id = ?";
-			if (this.jdbcTemplate.update(sql, new Object[] {view.getSong().getId()}) > 0) {
-				return true;
-			}
+			this.jdbcTemplate.update(sql, new Object[] { view.getSong().getId() });
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -18,9 +18,9 @@ import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.PlaylistDao;
 import com.sinnguyen.entities.Playlist;
 import com.sinnguyen.entities.Song;
+import com.sinnguyen.mapper.PlaylistMapper;
+import com.sinnguyen.mapper.SongMapper;
 import com.sinnguyen.model.PlaylistDTO;
-import com.sinnguyen.model.PlaylistMapper;
-import com.sinnguyen.model.SongMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -182,6 +182,28 @@ public class PlaylistDaoImpl implements PlaylistDao {
 			return (Playlist) queryForObject;
 		} catch (Exception e) {
 			return null;
+		}
+	}
+
+	@Override
+	public void getCountList(PlaylistDTO searchDto) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(playlist.id) FROM playlist WHERE 1 = 1");
+		if(searchDto.getUsername()!=null) {
+			sql.append(" AND user.username = '" + searchDto.getUsername() + "'");
+		}
+		if(searchDto.getUserId()!=null) {
+			sql.append(" AND user.id = '" + searchDto.getUserId() + "'");
+		}
+		if(searchDto.getKeyword()==null) {
+			searchDto.setKeyword("");
+		}
+		sql.append(" AND LOWER(playlist.title) LIKE '%" + searchDto.getKeyword() + "%'");
+		try {
+			int results = this.jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			searchDto.setTotal(results);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

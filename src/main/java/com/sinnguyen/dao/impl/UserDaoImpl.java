@@ -19,9 +19,9 @@ import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.UserDao;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.mapper.UserMapper;
 import com.sinnguyen.model.SearchDTO;
 import com.sinnguyen.model.UserDTO;
-import com.sinnguyen.model.UserMapper;
 import com.sinnguyen.util.MainUtility;
 import com.sinnguyen.util.PasswordGenerator;
 
