@@ -17,7 +17,7 @@ public interface UserService {
 	ResponseModel getByUsername(String username);
 	ResponseModel userGetByUsername(String username, String currentUsername);
 	ResponseModel activate(String code);
-	ResponseModel editByUsername(User user, MultipartFile file);
+	ResponseModel edit(User user, MultipartFile file);
 	ResponseModel doFollow(String username, int userId);
 	ResponseModel userGetListFollowing(UserDTO searchDto);
 	ResponseModel userGetList(UserDTO searchDto);

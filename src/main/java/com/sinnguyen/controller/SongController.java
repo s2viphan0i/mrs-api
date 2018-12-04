@@ -59,6 +59,7 @@ public class SongController {
 			Song s = mapper.readValue(song, Song.class);
 			User u = new User();
 			u.setUsername(username);
+			u.setRole("ROLE_USER");
 			s.setUser(u);
 			s.setId(id);
 			return songService.edit(s, image);
@@ -109,6 +110,11 @@ public class SongController {
 	@RequestMapping(value="/user/songs/favorite/list", method = RequestMethod.POST)
 	public ResponseModel userGetFavoriteList(@RequestBody SongDTO searchDto) {
 		return songService.userGetFavoriteList(searchDto);
+	}
+	
+	@RequestMapping(value="/user/songs/view/list", method = RequestMethod.POST)
+	public ResponseModel userGetViewList(@RequestBody SongDTO searchDto) {
+		return songService.userGetViewList(searchDto);
 	}
 	
 	@RequestMapping(value="/user/songs/{id}", method = RequestMethod.GET)

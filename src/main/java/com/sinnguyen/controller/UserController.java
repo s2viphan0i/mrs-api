@@ -68,7 +68,7 @@ public class UserController{
 			User u = mapper.readValue(user, User.class);
 			u.setUsername(username);
 			u.setId(id);
-			return userService.editByUsername(u, file);
+			return userService.edit(u, file);
 		} catch (Exception ex) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");

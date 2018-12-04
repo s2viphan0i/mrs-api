@@ -1,21 +1,13 @@
 package com.sinnguyen.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
-import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLBooleanPrefJDBCDataModel;
-import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLJDBCDataModel;
-import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
-import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
-import org.apache.mahout.cf.taste.model.JDBCDataModel;
-import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,9 +15,7 @@ import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.FollowDao;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.dao.UserDao;
-import com.sinnguyen.entities.Favorite;
 import com.sinnguyen.entities.Follow;
-import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.model.UserDTO;
@@ -96,7 +86,6 @@ public class UserServiceImpl implements UserService {
 	public ResponseModel getById(int id) {
 		ResponseModel result = new ResponseModel();
 		User user = userDao.getUserbyId(id);
-
 		if (user != null) {
 			result.setSuccess(true);
 			result.setMsg("Lấy thông tin thành công");
@@ -146,7 +135,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public ResponseModel editByUsername(User user, MultipartFile file) {
+	public ResponseModel edit(User user, MultipartFile file) {
 		ResponseModel result = new ResponseModel();
 		if (user.getUsername() == null || user.getUsername().equals("") || user.getFullname() == null
 				|| user.getFullname().equals("")) {
@@ -157,7 +146,7 @@ public class UserServiceImpl implements UserService {
 				String filename = MainUtility.saveSquareImage(file);
 				user.setAvatar(filename);
 			}
-			if (userDao.editByUsername(user)) {
+			if (userDao.edit(user)) {
 				result.setSuccess(true);
 				result.setMsg("Sửa thông tin người dùng thành công");
 				result.setContent(user);

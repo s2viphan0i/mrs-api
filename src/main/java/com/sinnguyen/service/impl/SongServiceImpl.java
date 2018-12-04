@@ -2,6 +2,7 @@ package com.sinnguyen.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -75,15 +76,16 @@ public class SongServiceImpl implements SongService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ResponseModel edit(Song song, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
+		System.out.println(song.getUser().getRole());
 		if (song.getGenre() == null || song.getGenre().getId() == 0 || song.getTitle() == null
 				|| song.getTitle().equals("")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin bài hát không hợp lệ");
-		} else if(songDao.checkOwner(song)) {
+		} else if (songDao.checkOwner(song)) {
 			Genre genre = genreDao.getById(song.getGenre().getId());
 			if (genre == null) {
 				result.setSuccess(false);
@@ -91,7 +93,7 @@ public class SongServiceImpl implements SongService {
 				return result;
 			}
 			song.setGenre(genre);
-			if(image != null && image.getContentType().matches("image\\/?\\w+")) {
+			if (image != null && image.getContentType().matches("image\\/?\\w+")) {
 				String imageurl = MainUtility.saveSquareImage(image);
 				song.setImage(imageurl);
 			}
@@ -266,9 +268,14 @@ public class SongServiceImpl implements SongService {
 		favorite.setSong(song);
 		View view = new View();
 		view.setSong(song);
-		if(songDao.checkOwner(song)&&songDao.delete(song)&&favoriteDao.delete(favorite)&&viewDao.delete(view)) {
-			result.setSuccess(true);
-			result.setMsg("Xóa bài hát thành công");
+		if (songDao.checkOwner(song)) {
+			if(songDao.delete(song) && favoriteDao.delete(favorite) && viewDao.delete(view)) {
+				result.setSuccess(true);
+				result.setMsg("Xóa bài hát thành công");
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+			}
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
@@ -306,6 +313,7 @@ public class SongServiceImpl implements SongService {
 		User user = userDao.getUserbyUsername(username);
 		ResponseModel result = new ResponseModel();
 		List<Song> songs = songDao.userGetFavoriteList(user, searchDto);
+		songDao.countUserGetFavoriteList(user, searchDto);
 		if (songs == null) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
@@ -316,7 +324,31 @@ public class SongServiceImpl implements SongService {
 		} else {
 			result.setSuccess(true);
 			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
+			result.setContent(songs);
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userGetViewList(SongDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.userGetViewList(user, searchDto);
+		songDao.countUserGetViewList(user, searchDto);
+		if (songs == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
 			result.setTotal(0);
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
 			result.setContent(songs);
 		}
 		return result;
