@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
 				String filename = MainUtility.saveSquareImage(file);
 				user.setAvatar(filename);
 			}
-			if (userDao.edit(user)) {
+			if (userDao.editByUsername(user)) {
 				result.setSuccess(true);
 				result.setMsg("Sửa thông tin người dùng thành công");
 				result.setContent(user);

@@ -13,6 +13,7 @@ public interface UserDao {
 	List<User> getAllUser();
 	
 	boolean edit(User user);
+	boolean editByUsername(User user);
 	boolean insertActivation(User user);
 	boolean activate(String code);
 	User getUserbyEmail(String email);

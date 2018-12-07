@@ -127,6 +127,31 @@ public class UserDaoImpl implements UserDao {
 		}
 		return false;
 	}
+	
+	public boolean editByUsername(User user) {
+		try {
+			String sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ?, avatar = ? WHERE username = ?";
+			Object[] newObj = new Object[] { user.getFullname(),
+					(user.getBirthdate() == null) ? null
+							: MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
+					user.getPhone(), user.getNote(), user.getAvatar(), user.getUsername() };
+			if (user.getAvatar() == null) {
+				sql = "UPDATE user SET fullname = ?, birthdate = ?, phone = ?, note = ? WHERE username = ?";
+				newObj = new Object[] { user.getFullname(),
+						(user.getBirthdate() == null) ? null
+								: MainUtility.dateToStringFormat(user.getBirthdate(), "yyyy-MM-dd HH:mm:ss"),
+						user.getPhone(), user.getNote(), user.getUsername() };
+			}
+
+			int row = this.jdbcTemplate.update(sql, newObj);
+			if (row > 0) {
+				return true;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
 
 	public User getUserbyEmail(String email) {
 		String sql = "SELECT * FROM user WHERE email = ?";

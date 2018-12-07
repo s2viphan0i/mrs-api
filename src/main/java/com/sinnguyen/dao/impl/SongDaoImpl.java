@@ -733,7 +733,7 @@ public class SongDaoImpl implements SongDao {
 	@Override
 	public List<Map<String, Object>> reportUpload(Date from, Date to) {
 		try {
-			String sql = "SELECT COUNT(song.id) AS uploads, create_time FROM song WHERE create_time >= ? AND create_time <= ? + interval 1 day GROUP BY DATE_FORMAT(song.create_time,'%m-%d-%Y') order by create_time";
+			String sql = "SELECT COUNT(song.id) AS uploads, DATE_FORMAT(song.create_time,'%m-%d-%Y') as create_time FROM song WHERE create_time >= ? AND create_time <= ? + interval 1 day GROUP BY DATE_FORMAT(song.create_time,'%m-%d-%Y') order by create_time";
 			List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString(),
 					new Object[] { MainUtility.dateToStringFormat(from, "yyyy-MM-dd HH:mm:ss"),
 							MainUtility.dateToStringFormat(to, "yyyy-MM-dd HH:mm:ss") });

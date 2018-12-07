@@ -9,6 +9,8 @@ import com.sinnguyen.model.ResponseModel;
 
 public interface PlaylistService {
 	ResponseModel add(Playlist playlist, MultipartFile image);
+	ResponseModel edit(Playlist playlist, MultipartFile image);
+	ResponseModel delete(Playlist playlist);
 	ResponseModel getListbyAuth();
 	ResponseModel getList(PlaylistDTO searchDto);
 	ResponseModel addSongtoPlaylist(Song song, int playlistId);

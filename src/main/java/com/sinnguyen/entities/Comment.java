@@ -13,7 +13,6 @@ public class Comment implements Serializable {
 	private int id;
 	private User user;
 	private String content;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
 	private Date createTime;
 
 	public Comment() {

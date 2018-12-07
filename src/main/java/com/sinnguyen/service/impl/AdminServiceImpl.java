@@ -125,7 +125,7 @@ public class AdminServiceImpl implements AdminService {
 		follow.setFollowing(user);
 		if(userDao.deactivated(user)) {
 			result.setSuccess(true);
-			result.setMsg("Xóa tài khoản thành công");
+			result.setMsg("Khóa tài khoản thành công");
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra vui lòng thử lại");

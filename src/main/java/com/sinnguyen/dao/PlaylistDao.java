@@ -8,6 +8,9 @@ import com.sinnguyen.model.PlaylistDTO;
 
 public interface PlaylistDao {
 	boolean add(Playlist playlist);
+	boolean edit(Playlist playlist);
+	boolean delete(Playlist playlist);
+	boolean deleteAllSong(Playlist playlist);
 	boolean checkSonginPLaylist(Song song, Playlist playlistId);
 	boolean check(Playlist playlist);
 	boolean addSong(Song song, Playlist playlist);

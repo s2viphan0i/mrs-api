@@ -11,9 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sinnguyen.dao.PlaylistDao;
 import com.sinnguyen.dao.SongDao;
 import com.sinnguyen.dao.UserDao;
+import com.sinnguyen.entities.Favorite;
 import com.sinnguyen.entities.Playlist;
 import com.sinnguyen.entities.Song;
 import com.sinnguyen.entities.User;
+import com.sinnguyen.entities.View;
 import com.sinnguyen.model.PlaylistDTO;
 import com.sinnguyen.model.ResponseModel;
 import com.sinnguyen.service.PlaylistService;
@@ -179,6 +181,50 @@ public class PlaylistServiceImpl implements PlaylistService {
 			result.setMsg("Lấy dữ liệu thành công");
 			result.setContent(playlists);
 			result.setTotal(searchDto.getTotal());
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel edit(Playlist playlist, MultipartFile image) {
+		ResponseModel result = new ResponseModel();
+		if (playlist.getTitle() == null || playlist.getTitle().equals("")){
+			result.setSuccess(false);
+			result.setMsg("Thông tin playlist không hợp lệ");
+		} else if (playlistDao.check(playlist)) {
+			if(image != null && image.getContentType().matches("image\\/?\\w+")) {
+				String imageurl = MainUtility.saveSquareImage(image);
+				playlist.setImage(imageurl);
+			}
+			if (playlistDao.edit(playlist)) {
+				result.setSuccess(true);
+				result.setMsg("Sửa thông tin playlist thành công");
+				result.setContent(playlist);
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+			}
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel delete(Playlist playlist) {
+		ResponseModel result = new ResponseModel();
+		if (playlistDao.check(playlist)) {
+			if(playlistDao.delete(playlist)&&playlistDao.deleteAllSong(playlist)) {
+				result.setSuccess(true);
+				result.setMsg("Xóa playlist thành công");
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+			}
+		} else {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 		}
 		return result;
 	}

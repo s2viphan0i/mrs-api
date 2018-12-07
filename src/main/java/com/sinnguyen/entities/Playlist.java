@@ -17,7 +17,6 @@ public class Playlist implements Serializable {
 	private User user;
 	private List<Song> songs;
 	private int songsCount;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date createTime;
 	private Boolean type;
 
