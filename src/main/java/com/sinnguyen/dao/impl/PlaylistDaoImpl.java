@@ -146,8 +146,6 @@ public class PlaylistDaoImpl implements PlaylistDao {
 		try {
 			String sql = "SELECT EXISTS (SELECT 1 FROM playlist INNER JOIN user ON playlist.user_id = user.id "
 					+ "WHERE playlist.id = ? AND user.username = ?)";
-			System.out.println(playlist.getId());
-			System.out.println(playlist.getUser().getUsername());
 			if (this.jdbcTemplate.queryForObject(sql, Integer.class, playlist.getId(),
 					playlist.getUser().getUsername()) == 1) {
 				return true;

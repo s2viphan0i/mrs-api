@@ -26,17 +26,18 @@ public class PlaylistServiceImpl implements PlaylistService {
 
 	@Autowired
 	UserDao userDao;
-	
+
 	@Autowired
 	PlaylistDao playlistDao;
-	
+
 	@Autowired
 	SongDao songDao;
-	
+
 	@Override
 	public ResponseModel add(Playlist playlist, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
-		if (playlist.getTitle() == null || playlist.getTitle().equals("") || image == null || !image.getContentType().matches("image\\/?\\w+")){
+		if (playlist.getTitle() == null || playlist.getTitle().equals("") || image == null
+				|| !image.getContentType().matches("image\\/?\\w+")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin playlist không hợp lệ");
 		} else {
@@ -71,7 +72,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 			result.setSuccess(true);
 			result.setMsg("Bạn chưa tạo playlist nào");
 		} else {
-			for(Playlist p: playlists) {
+			for (Playlist p : playlists) {
 				p.setSongs(songDao.getSongbyPlaylistId(p.getId()));
 			}
 			result.setSuccess(true);
@@ -91,12 +92,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 		User user = new User();
 		user.setUsername(username);
 		playlist.setUser(user);
-		if(!playlistDao.check(playlist)||!songDao.check(song)) {
+		if (!playlistDao.check(playlist) || !songDao.check(song)) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
-		}
-		else if(!playlistDao.checkSonginPLaylist(song, playlist)) {
-			if(playlistDao.addSong(song, playlist)) {
+		} else if (!playlistDao.checkSonginPLaylist(song, playlist)) {
+			if (playlistDao.addSong(song, playlist)) {
 				result.setSuccess(true);
 				result.setMsg("Thêm bài hát vào playlist thành công");
 			} else {
@@ -122,18 +122,12 @@ public class PlaylistServiceImpl implements PlaylistService {
 		playlist.setUser(user);
 		Song song = new Song();
 		song.setId(songId);
-		if(!playlistDao.check(playlist)||!songDao.check(song)) {
+		if (!playlistDao.check(playlist)) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
-		}
-		else if(playlistDao.checkSonginPLaylist(song, playlist)) {
-			if(playlistDao.removeSong(song, playlist)) {
-				result.setSuccess(true);
-				result.setMsg("Xóa bài hát trong playlist thành công");
-			} else {
-				result.setSuccess(false);
-				result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
-			}
+		} else if (playlistDao.removeSong(song, playlist)) {
+			result.setSuccess(true);
+			result.setMsg("Xóa bài hát trong playlist thành công");
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Bài hát không tồn tại trong playlist");
@@ -174,7 +168,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 			result.setSuccess(true);
 			result.setMsg("Không tìm thấy playlist nào");
 		} else {
-			for(Playlist p: playlists) {
+			for (Playlist p : playlists) {
 				p.setSongs(songDao.getSongbyPlaylistId(p.getId()));
 			}
 			result.setSuccess(true);
@@ -188,11 +182,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 	@Override
 	public ResponseModel edit(Playlist playlist, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
-		if (playlist.getTitle() == null || playlist.getTitle().equals("")){
+		if (playlist.getTitle() == null || playlist.getTitle().equals("")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin playlist không hợp lệ");
 		} else if (playlistDao.check(playlist)) {
-			if(image != null && image.getContentType().matches("image\\/?\\w+")) {
+			if (image != null && image.getContentType().matches("image\\/?\\w+")) {
 				String imageurl = MainUtility.saveSquareImage(image);
 				playlist.setImage(imageurl);
 			}
@@ -215,7 +209,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 	public ResponseModel delete(Playlist playlist) {
 		ResponseModel result = new ResponseModel();
 		if (playlistDao.check(playlist)) {
-			if(playlistDao.delete(playlist)&&playlistDao.deleteAllSong(playlist)) {
+			if (playlistDao.delete(playlist) && playlistDao.deleteAllSong(playlist)) {
 				result.setSuccess(true);
 				result.setMsg("Xóa playlist thành công");
 			} else {

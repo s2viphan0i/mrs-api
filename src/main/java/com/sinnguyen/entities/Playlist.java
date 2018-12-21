@@ -16,9 +16,7 @@ public class Playlist implements Serializable {
 	private String image;
 	private User user;
 	private List<Song> songs;
-	private int songsCount;
 	private Date createTime;
-	private Boolean type;
 
 	public Playlist() {
 		super();
@@ -56,14 +54,6 @@ public class Playlist implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public Boolean getType() {
-		return type;
-	}
-
-	public void setType(Boolean type) {
-		this.type = type;
-	}
-
 	public String getImage() {
 		return image;
 	}
@@ -78,14 +68,6 @@ public class Playlist implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public int getSongsCount() {
-		return songsCount;
-	}
-
-	public void setSongsCount(int songsCount) {
-		this.songsCount = songsCount;
 	}
 
 }

@@ -97,16 +97,6 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
-	public ResponseModel getAllUser() {
-		ResponseModel result = new ResponseModel();
-		result.setSuccess(true);
-		result.setMsg("Lấy danh sách người dùng thành công");
-		List<User> users = userDao.getAllUser();
-
-		result.setContent(users);
-		return result;
-	}
-
 	public ResponseModel getByUsername(String username) {
 		ResponseModel result = new ResponseModel();
 		User user = userDao.getUserbyUsername(username);

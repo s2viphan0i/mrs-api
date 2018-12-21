@@ -1,6 +1,7 @@
 package com.sinnguyen.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Follow implements Serializable {
 	/**
@@ -10,6 +11,7 @@ public class Follow implements Serializable {
 	private int id;
 	private User follower;
 	private User following;
+	private Date followTime;
 
 	public Follow() {
 		super();
@@ -37,6 +39,14 @@ public class Follow implements Serializable {
 
 	public void setFollowing(User following) {
 		this.following = following;
+	}
+
+	public Date getFollowTime() {
+		return followTime;
+	}
+
+	public void setFollowTime(Date followTime) {
+		this.followTime = followTime;
 	}
 
 }

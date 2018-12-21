@@ -2,7 +2,6 @@ package com.sinnguyen.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sinnguyen.dao.CommentDao;
 import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.GenreDao;
 import com.sinnguyen.dao.SongDao;
@@ -40,6 +40,9 @@ public class SongServiceImpl implements SongService {
 
 	@Autowired
 	private ViewDao viewDao;
+
+	@Autowired
+	private CommentDao commentDao;
 
 	@Autowired
 	private FavoriteDao favoriteDao;
@@ -80,7 +83,6 @@ public class SongServiceImpl implements SongService {
 	@Override
 	public ResponseModel edit(Song song, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
-		System.out.println(song.getUser().getRole());
 		if (song.getGenre() == null || song.getGenre().getId() == 0 || song.getTitle() == null
 				|| song.getTitle().equals("")) {
 			result.setSuccess(false);
@@ -264,12 +266,9 @@ public class SongServiceImpl implements SongService {
 	@Override
 	public ResponseModel delete(Song song) {
 		ResponseModel result = new ResponseModel();
-		Favorite favorite = new Favorite();
-		favorite.setSong(song);
-		View view = new View();
-		view.setSong(song);
 		if (songDao.checkOwner(song)) {
-			if(songDao.delete(song) && favoriteDao.delete(favorite) && viewDao.delete(view)) {
+			if (songDao.delete(song) && favoriteDao.deleteAllBySong(song.getId())
+					&& viewDao.deleteAllBySong(song.getId()) && commentDao.deleteAllBySong(song.getId())) {
 				result.setSuccess(true);
 				result.setMsg("Xóa bài hát thành công");
 			} else {

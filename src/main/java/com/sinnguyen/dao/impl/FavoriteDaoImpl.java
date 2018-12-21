@@ -53,10 +53,10 @@ public class FavoriteDaoImpl implements FavoriteDao {
 	}
 
 	@Override
-	public boolean delete(Favorite favorite) {
+	public boolean deleteAllBySong(int songId) {
 		try {
 			String sql = "DELETE FROM favorite WHERE song_id = ?";
-			this.jdbcTemplate.update(sql, new Object[] { favorite.getSong().getId() });
+			this.jdbcTemplate.update(sql, new Object[] { songId });
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

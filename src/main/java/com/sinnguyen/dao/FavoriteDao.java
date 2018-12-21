@@ -8,6 +8,6 @@ public interface FavoriteDao {
 	boolean checkFavorite(Favorite favorite);
 	boolean addFavorite(Favorite favorite);
 	boolean removeFavorite(Favorite favorite);
-	boolean delete(Favorite favorite);
+	boolean deleteAllBySong(int songId);
 	int reportFavorite(Date from, Date to);
 }

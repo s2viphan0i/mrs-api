@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sinnguyen.dao.CommentDao;
 import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.FollowDao;
 import com.sinnguyen.dao.GenreDao;
@@ -29,26 +30,28 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	GenreDao genreDao;
-	
+
 	@Autowired
 	SongDao songDao;
-	
+
 	@Autowired
 	UserDao userDao;
-	
+
 	@Autowired
 	FavoriteDao favoriteDao;
-	
+
 	@Autowired
 	ViewDao viewDao;
-	
+
 	@Autowired
 	FollowDao followDao;
-	
+
+	@Autowired
+	CommentDao commentDao;
+
 	@Override
 	public ResponseModel editSong(Song song, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
-		System.out.println(song.getUser().getRole());
 		if (song.getGenre() == null || song.getGenre().getId() == 0 || song.getTitle() == null
 				|| song.getTitle().equals("")) {
 			result.setSuccess(false);
@@ -87,7 +90,7 @@ public class AdminServiceImpl implements AdminService {
 			if (file != null) {
 				String filename = MainUtility.saveSquareImage(file);
 				user.setAvatar(filename);
-				
+
 			}
 			if (userDao.edit(user)) {
 				result.setSuccess(true);
@@ -108,7 +111,8 @@ public class AdminServiceImpl implements AdminService {
 		favorite.setSong(song);
 		View view = new View();
 		view.setSong(song);
-		if(songDao.delete(song) && favoriteDao.delete(favorite) && viewDao.delete(view)) {
+		if (songDao.delete(song) && favoriteDao.deleteAllBySong(song.getId()) && viewDao.deleteAllBySong(song.getId())
+				&& commentDao.deleteAllBySong(song.getId())) {
 			result.setSuccess(true);
 			result.setMsg("Xóa bài hát thành công");
 		} else {
@@ -121,9 +125,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public ResponseModel deleteUser(User user) {
 		ResponseModel result = new ResponseModel();
-		Follow follow = new Follow();
-		follow.setFollowing(user);
-		if(userDao.deactivated(user)) {
+		if (userDao.deactivated(user)) {
 			result.setSuccess(true);
 			result.setMsg("Khóa tài khoản thành công");
 		} else {
@@ -132,14 +134,14 @@ public class AdminServiceImpl implements AdminService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ResponseModel reportUpload(String from, String to) {
 		ResponseModel result = new ResponseModel();
 		try {
 			Date fromDate = MainUtility.stringtoDate(from, "dd-MM-yyyy");
 			Date toDate = MainUtility.stringtoDate(to, "dd-MM-yyyy");
-			if(fromDate.compareTo(toDate)==1) {
+			if (fromDate.compareTo(toDate) == 1) {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 				return result;
@@ -162,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			Date fromDate = MainUtility.stringtoDate(from, "dd-MM-yyyy");
 			Date toDate = MainUtility.stringtoDate(to, "dd-MM-yyyy");
-			if(fromDate.compareTo(toDate)==1) {
+			if (fromDate.compareTo(toDate) == 1) {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 				return result;
@@ -185,7 +187,7 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			Date fromDate = MainUtility.stringtoDate(from, "dd-MM-yyyy");
 			Date toDate = MainUtility.stringtoDate(to, "dd-MM-yyyy");
-			if(fromDate.compareTo(toDate)==1) {
+			if (fromDate.compareTo(toDate) == 1) {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 				return result;
@@ -201,14 +203,14 @@ public class AdminServiceImpl implements AdminService {
 			return result;
 		}
 	}
-	
+
 	@Override
 	public ResponseModel reportFollow(String from, String to) {
 		ResponseModel result = new ResponseModel();
 		try {
 			Date fromDate = MainUtility.stringtoDate(from, "dd-MM-yyyy");
 			Date toDate = MainUtility.stringtoDate(to, "dd-MM-yyyy");
-			if(fromDate.compareTo(toDate)==1) {
+			if (fromDate.compareTo(toDate) == 1) {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 				return result;
@@ -231,7 +233,7 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			Date fromDate = MainUtility.stringtoDate(from, "dd-MM-yyyy");
 			Date toDate = MainUtility.stringtoDate(to, "dd-MM-yyyy");
-			if(fromDate.compareTo(toDate)==1) {
+			if (fromDate.compareTo(toDate) == 1) {
 				result.setSuccess(false);
 				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
 				return result;
@@ -247,5 +249,5 @@ public class AdminServiceImpl implements AdminService {
 			return result;
 		}
 	}
-	
+
 }

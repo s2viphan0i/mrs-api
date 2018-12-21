@@ -47,10 +47,10 @@ public class ViewDaoImpl implements ViewDao {
 	}
 
 	@Override
-	public boolean delete(View view) {
+	public boolean deleteAllBySong(int songId) {
 		try {
 			String sql = "DELETE FROM view WHERE song_id = ?";
-			this.jdbcTemplate.update(sql, new Object[] { view.getSong().getId() });
+			this.jdbcTemplate.update(sql, new Object[] { songId });
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

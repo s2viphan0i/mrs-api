@@ -9,7 +9,6 @@ import com.sinnguyen.model.UserDTO;
 public interface UserService {
 	ResponseModel add(User user);
 	ResponseModel delete(User user);
-	ResponseModel getAllUser();
 	
 	ResponseModel login();
 	ResponseModel getById(int id);

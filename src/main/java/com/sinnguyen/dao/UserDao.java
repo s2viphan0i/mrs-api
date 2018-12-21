@@ -10,7 +10,6 @@ import com.sinnguyen.model.UserDTO;
 public interface UserDao {
 	boolean add(User user);
 	boolean checkUsername(User user);
-	List<User> getAllUser();
 	
 	boolean edit(User user);
 	boolean editByUsername(User user);

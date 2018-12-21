@@ -356,12 +356,10 @@ public class SongDaoImpl implements SongDao {
 	@Override
 	public List<Song> getListRecommendation(int id) {
 		String sql = "SELECT s1.*, IF(s1.owner_id=s2.owner_id, 1, 0) AS owner_diff, IF(s1.genre_id=s2.genre_id, 1, 0) AS genre_diff, "
-				+ "recommendation.similarity, user.username AS owner_username, user.fullname AS owner_fullname FROM recommendation "
-				+ "RIGHT JOIN song AS s1 ON recommendation.r_song_id = s1.id INNER JOIN user ON s1.owner_id = user.id "
-				+ "INNER JOIN song AS s2 ON recommendation.song_id = s2.id WHERE recommendation.song_id = " + id
-				+ " ORDER BY recommendation.similarity DESC, owner_diff DESC, genre_diff DESC";
+				+ "ABS(s1.create_time - s2.create_time) AS create_time_diff FROM song AS s1 INNER JOIN (SELECT * FROM song WHERE song.id = ?) AS s2 WHERE s1.id <> ? "
+				+ "ORDER BY owner_diff DESC, genre_diff DESC, create_time_diff ASC LIMIT 0,5";
 		List<Song> songs = new ArrayList<Song>();
-		List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString());
+		List<Map<String, Object>> rows = this.jdbcTemplate.queryForList(sql.toString(), new Object[] {id, id});
 		for (Map row : rows) {
 			Song song = new Song();
 			song.setId((Integer) (row.get("id")));

@@ -39,7 +39,7 @@ public class UserDaoImpl implements UserDao {
 
 	public boolean add(final User user) {
 		try {
-			final String sql = "INSERT INTO user (username, password, fullname, avatar, birthdate, email, phone, activated, role, note) VALUES (?,?,?,?,?,?,?,?,?,?)";
+			final String sql = "INSERT INTO user (username, password, fullname, avatar, birthdate, email, phone, activated, role, note, create_time) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 			KeyHolder holder = new GeneratedKeyHolder();
 			int row = this.jdbcTemplate.update(new PreparedStatementCreator() {
 
@@ -63,7 +63,7 @@ public class UserDaoImpl implements UserDao {
 					ps.setBoolean(8, false);
 					ps.setString(9, "ROLE_USER");
 					ps.setString(10, user.getNote());
-
+					ps.setString(11, MainUtility.dateToStringFormat(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					return ps;
 				}
 			}, holder);
@@ -158,16 +158,6 @@ public class UserDaoImpl implements UserDao {
 		try {
 			Object queryForObject = this.jdbcTemplate.queryForObject(sql, new Object[] { email }, new UserMapper());
 			return (User) queryForObject;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	public List<User> getAllUser() {
-		String sql = "SELECT * FROM user WHERE activated = ?";
-		try {
-			List<User> users = this.jdbcTemplate.query(sql, new Object[] { true }, new UserMapper());
-			return users;
 		} catch (Exception e) {
 			return null;
 		}
