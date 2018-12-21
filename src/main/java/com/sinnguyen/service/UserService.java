@@ -9,7 +9,6 @@ import com.sinnguyen.model.UserDTO;
 public interface UserService {
 	ResponseModel add(User user);
 	ResponseModel delete(User user);
-	ResponseModel getAllUser();
 	
 	ResponseModel login();
 	ResponseModel getById(int id);
@@ -17,7 +16,7 @@ public interface UserService {
 	ResponseModel getByUsername(String username);
 	ResponseModel userGetByUsername(String username, String currentUsername);
 	ResponseModel activate(String code);
-	ResponseModel editByUsername(User user, MultipartFile file);
+	ResponseModel edit(User user, MultipartFile file);
 	ResponseModel doFollow(String username, int userId);
 	ResponseModel userGetListFollowing(UserDTO searchDto);
 	ResponseModel userGetList(UserDTO searchDto);

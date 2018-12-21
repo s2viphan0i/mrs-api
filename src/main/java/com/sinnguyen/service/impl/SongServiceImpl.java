@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sinnguyen.dao.CommentDao;
 import com.sinnguyen.dao.FavoriteDao;
 import com.sinnguyen.dao.GenreDao;
 import com.sinnguyen.dao.SongDao;
@@ -39,6 +40,9 @@ public class SongServiceImpl implements SongService {
 
 	@Autowired
 	private ViewDao viewDao;
+
+	@Autowired
+	private CommentDao commentDao;
 
 	@Autowired
 	private FavoriteDao favoriteDao;
@@ -75,7 +79,7 @@ public class SongServiceImpl implements SongService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ResponseModel edit(Song song, MultipartFile image) {
 		ResponseModel result = new ResponseModel();
@@ -83,7 +87,7 @@ public class SongServiceImpl implements SongService {
 				|| song.getTitle().equals("")) {
 			result.setSuccess(false);
 			result.setMsg("Thông tin bài hát không hợp lệ");
-		} else if(songDao.checkOwner(song)) {
+		} else if (songDao.checkOwner(song)) {
 			Genre genre = genreDao.getById(song.getGenre().getId());
 			if (genre == null) {
 				result.setSuccess(false);
@@ -91,7 +95,7 @@ public class SongServiceImpl implements SongService {
 				return result;
 			}
 			song.setGenre(genre);
-			if(image != null && image.getContentType().matches("image\\/?\\w+")) {
+			if (image != null && image.getContentType().matches("image\\/?\\w+")) {
 				String imageurl = MainUtility.saveSquareImage(image);
 				song.setImage(imageurl);
 			}
@@ -262,13 +266,15 @@ public class SongServiceImpl implements SongService {
 	@Override
 	public ResponseModel delete(Song song) {
 		ResponseModel result = new ResponseModel();
-		Favorite favorite = new Favorite();
-		favorite.setSong(song);
-		View view = new View();
-		view.setSong(song);
-		if(songDao.checkOwner(song)&&songDao.delete(song)&&favoriteDao.delete(favorite)&&viewDao.delete(view)) {
-			result.setSuccess(true);
-			result.setMsg("Xóa bài hát thành công");
+		if (songDao.checkOwner(song)) {
+			if (songDao.delete(song) && favoriteDao.deleteAllBySong(song.getId())
+					&& viewDao.deleteAllBySong(song.getId()) && commentDao.deleteAllBySong(song.getId())) {
+				result.setSuccess(true);
+				result.setMsg("Xóa bài hát thành công");
+			} else {
+				result.setSuccess(false);
+				result.setMsg("Có lỗi xảy ra vui lòng thử lại");
+			}
 		} else {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra vui lòng thử lại");
@@ -306,6 +312,7 @@ public class SongServiceImpl implements SongService {
 		User user = userDao.getUserbyUsername(username);
 		ResponseModel result = new ResponseModel();
 		List<Song> songs = songDao.userGetFavoriteList(user, searchDto);
+		songDao.countUserGetFavoriteList(user, searchDto);
 		if (songs == null) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
@@ -316,7 +323,31 @@ public class SongServiceImpl implements SongService {
 		} else {
 			result.setSuccess(true);
 			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
+			result.setContent(songs);
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseModel userGetViewList(SongDTO searchDto) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		User user = userDao.getUserbyUsername(username);
+		ResponseModel result = new ResponseModel();
+		List<Song> songs = songDao.userGetViewList(user, searchDto);
+		songDao.countUserGetViewList(user, searchDto);
+		if (songs == null) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+		} else if (songs.isEmpty()) {
+			result.setSuccess(true);
+			result.setMsg("Không tìm được bài hát phù hợp");
 			result.setTotal(0);
+		} else {
+			result.setSuccess(true);
+			result.setMsg("Lấy dữ liệu thành công");
+			result.setTotal(searchDto.getTotal());
 			result.setContent(songs);
 		}
 		return result;

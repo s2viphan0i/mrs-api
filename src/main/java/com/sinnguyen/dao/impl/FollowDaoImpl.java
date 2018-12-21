@@ -51,4 +51,17 @@ public class FollowDaoImpl implements FollowDao {
 		}
 		return false;
 	}
+
+	@Override
+	public int reportFollow(Date from, Date to) {
+		try {
+			String sql = "SELECT COUNT(id) FROM follow WHERE timestamp >= ? AND timestamp <= ? + interval 1 day";
+			int results = this.jdbcTemplate.queryForObject(sql.toString(),
+					new Object[] { from, to }, Integer.class);
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

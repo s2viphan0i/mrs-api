@@ -11,4 +11,5 @@ public interface CommentDao {
 	boolean add(Song song, Comment comment);
 	void getCountList(int songId, SearchDTO searchDto);
 	boolean delete(Comment comment);
+	boolean deleteAllBySong(int songId);
 }

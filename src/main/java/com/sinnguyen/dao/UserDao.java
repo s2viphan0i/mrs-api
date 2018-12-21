@@ -1,5 +1,6 @@
 package com.sinnguyen.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.sinnguyen.entities.User;
@@ -9,11 +10,8 @@ import com.sinnguyen.model.UserDTO;
 public interface UserDao {
 	boolean add(User user);
 	boolean checkUsername(User user);
-	boolean delete(User user);
-	List<User> getAllUser();
-	boolean getById(int id);
-	boolean search(SearchDTO searchDTO);
 	
+	boolean edit(User user);
 	boolean editByUsername(User user);
 	boolean insertActivation(User user);
 	boolean activate(String code);
@@ -28,4 +26,6 @@ public interface UserDao {
 	List<User> getList(UserDTO userDto);
 	void getCountListFollowing(User user, UserDTO searchDto);
 	void getCountList(UserDTO userDto);
+	int reportUser(Date from, Date to);
+	boolean deactivated(User user);
 }

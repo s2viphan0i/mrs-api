@@ -1,12 +1,14 @@
 package com.sinnguyen.dao.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.sinnguyen.dao.ViewDao;
 import com.sinnguyen.entities.View;
-import com.sinnguyen.model.ViewMapper;
+import com.sinnguyen.mapper.ViewMapper;
 import com.sinnguyen.util.MainUtility;
 
 @Repository
@@ -43,18 +45,30 @@ public class ViewDaoImpl implements ViewDao {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public boolean delete(View view) {
+	public boolean deleteAllBySong(int songId) {
 		try {
 			String sql = "DELETE FROM view WHERE song_id = ?";
-			if (this.jdbcTemplate.update(sql, new Object[] {view.getSong().getId()}) > 0) {
-				return true;
-			}
+			this.jdbcTemplate.update(sql, new Object[] { songId });
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public int reportView(Date from, Date to) {
+		try {
+			String sql = "SELECT COUNT(id) FROM view WHERE timestamp >= ? AND timestamp <= ? + interval 1 day";
+			int results = this.jdbcTemplate.queryForObject(sql.toString(),
+					new Object[] { from, to }, Integer.class);
+			return results;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

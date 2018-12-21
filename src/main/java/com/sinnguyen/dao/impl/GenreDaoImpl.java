@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.sinnguyen.dao.GenreDao;
 import com.sinnguyen.entities.Genre;
 import com.sinnguyen.entities.User;
-import com.sinnguyen.model.GenreMapper;
-import com.sinnguyen.model.UserMapper;
+import com.sinnguyen.mapper.GenreMapper;
+import com.sinnguyen.mapper.UserMapper;
 
 @Repository
 public class GenreDaoImpl implements GenreDao {

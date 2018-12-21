@@ -40,7 +40,7 @@ public class CommentController {
 	}
 	
 	@RequestMapping(value = "/user/songs/{id}/comments", method = RequestMethod.POST)
-	public ResponseModel userViewSong(@PathVariable("id") int id, @RequestBody Comment comment) {
+	public ResponseModel addComment(@PathVariable("id") int id, @RequestBody Comment comment) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
 		User user = new User(); 

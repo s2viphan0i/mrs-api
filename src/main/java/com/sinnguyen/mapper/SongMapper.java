@@ -1,4 +1,4 @@
-package com.sinnguyen.model;
+package com.sinnguyen.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

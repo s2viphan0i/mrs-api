@@ -70,4 +70,45 @@ public class PlaylistController {
 		return playlistService.getById(id);
 	}
 	
+	@RequestMapping(value="/user/playlists/{id}", method = RequestMethod.PUT)
+	public ResponseModel edit(@RequestParam(value="image", required=false) MultipartFile image ,@PathVariable("id") int id, @RequestParam(value="playlist") String playlist) {
+		ResponseModel result = new ResponseModel();
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Playlist p = mapper.readValue(playlist, Playlist.class);
+			User u = new User();
+			u.setUsername(username);
+			p.setId(id);
+			p.setUser(u);
+			return playlistService.edit(p, image);
+		} catch (Exception ex) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			ex.printStackTrace();
+			return result;
+		}
+	}
+	
+	@RequestMapping(value="/user/playlists/{id}", method = RequestMethod.DELETE)
+	public ResponseModel deletePlaylist(@PathVariable("id") int id) {
+		ResponseModel result = new ResponseModel();
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Playlist p = new Playlist();
+			User u = new User();
+			u.setUsername(username);
+			p.setUser(u);
+			p.setId(id);
+			return playlistService.delete(p);
+		} catch (Exception ex) {
+			result.setSuccess(false);
+			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");
+			ex.printStackTrace();
+			return result;
+		}
+	}
 }

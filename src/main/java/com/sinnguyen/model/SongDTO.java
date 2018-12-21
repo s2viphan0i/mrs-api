@@ -16,7 +16,7 @@ public class SongDTO extends SearchDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date endDate;
 	private Integer userId;
-	private String username;
+	private String fullname;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date viewStartDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
@@ -94,12 +94,12 @@ public class SongDTO extends SearchDTO {
 		this.userId = userId;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getFullname() {
+		return fullname;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
 	}
 
 }

@@ -58,8 +58,8 @@ public class UserController{
         return userService.getByUsername(username);
     }
 	
-	@RequestMapping(value="/user/users/{id}", method = RequestMethod.PUT)
-	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user, @PathVariable("id") int id) {
+	@RequestMapping(value="/user", method = RequestMethod.PUT)
+	public ResponseModel editUser(@RequestParam(value="file", required=false) MultipartFile file,@RequestParam(value="user") String user) {
 		ResponseModel result = new ResponseModel();
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
@@ -67,8 +67,7 @@ public class UserController{
 			ObjectMapper mapper = new ObjectMapper();
 			User u = mapper.readValue(user, User.class);
 			u.setUsername(username);
-			u.setId(id);
-			return userService.editByUsername(u, file);
+			return userService.edit(u, file);
 		} catch (Exception ex) {
 			result.setSuccess(false);
 			result.setMsg("Có lỗi xảy ra! Vui lòng thử lại");

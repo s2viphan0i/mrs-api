@@ -50,6 +50,11 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public ResponseModel add(int songId, Comment comment) {
 		ResponseModel result = new ResponseModel();
+		if(comment.getContent()==null || comment.getContent().equals("")) {
+			result.setSuccess(false);
+			result.setMsg("Thông tin bình luận không hợp lệ");
+			return result;
+		}
 		User user = userDao.getUserbyUsername(comment.getUser().getUsername());
 		comment.setUser(user);
 		Song song = songDao.getById(songId);

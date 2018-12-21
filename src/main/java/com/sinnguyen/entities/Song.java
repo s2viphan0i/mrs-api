@@ -19,7 +19,6 @@ public class Song implements Serializable {
 	private String lyric;
 	private boolean mode;
 	private String image;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date createTime;
 	private int totalTime;
 	private int views;

@@ -16,6 +16,7 @@ public interface SongService {
 	ResponseModel userGetList(SongDTO searchDto);
 	ResponseModel userGetFollowingList(SongDTO songDto);
 	ResponseModel userGetFavoriteList(SongDTO songDto);
+	ResponseModel userGetViewList(SongDTO songDto);
 	ResponseModel userGetById(String username, int id);
 	ResponseModel getById(int id);
 	ResponseModel userViewSong(View view);

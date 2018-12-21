@@ -25,7 +25,6 @@ public class User implements Serializable {
 	private boolean isActivated;
 	@JsonIgnore
 	private String code;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date birthdate;
 	private int followers;
 	private int followings;

@@ -17,7 +17,7 @@ import com.mysql.jdbc.Statement;
 import com.sinnguyen.dao.CommentDao;
 import com.sinnguyen.entities.Comment;
 import com.sinnguyen.entities.Song;
-import com.sinnguyen.model.CommentMapper;
+import com.sinnguyen.mapper.CommentMapper;
 import com.sinnguyen.model.SearchDTO;
 import com.sinnguyen.util.MainUtility;
 import com.sinnguyen.util.PasswordGenerator;
@@ -31,8 +31,9 @@ public class CommentDaoImpl implements CommentDao {
 	@Override
 	public List<Comment> getBySongId(int songId, SearchDTO searchDto) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT comment.*, user.fullname AS owner_fullname, user.username AS owner_username, user.avatar AS owner_avatar FROM comment "
-				+ "INNER JOIN user ON comment.user_id = user.id WHERE comment.song_id = ? ORDER BY create_time DESC LIMIT ? OFFSET ?");
+		sql.append(
+				"SELECT comment.*, user.fullname AS owner_fullname, user.username AS owner_username, user.avatar AS owner_avatar FROM comment "
+						+ "INNER JOIN user ON comment.user_id = user.id WHERE comment.song_id = ? ORDER BY create_time DESC LIMIT ? OFFSET ?");
 		if (searchDto.getResults() == null) {
 			searchDto.setResults(10);
 		}
@@ -95,9 +96,21 @@ public class CommentDaoImpl implements CommentDao {
 		String sql = "DELETE FROM comment WHERE comment.id = ? AND comment.user_id = ?";
 		try {
 			int row = this.jdbcTemplate.update(sql, comment.getId(), comment.getUser().getId());
-			if(row>0) {
+			if (row > 0) {
 				return true;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteAllBySong(int songId) {
+		try {
+			String sql = "DELETE FROM comment WHERE song_id = ?";
+			this.jdbcTemplate.update(sql, new Object[] { songId });
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

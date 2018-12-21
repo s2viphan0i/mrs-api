@@ -15,11 +15,12 @@ public class FavoriteDaoImpl implements FavoriteDao {
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
+
 	@Override
 	public boolean checkFavorite(Favorite favorite) {
 		String sql = "SELECT EXISTS(SELECT 1 FROM favorite WHERE favorite.user_id = ? AND favorite.song_id = ?)";
-		if (this.jdbcTemplate.queryForObject(sql, new Object[] { favorite.getUser().getId(), favorite.getSong().getId() }, Integer.class) == 1) {
+		if (this.jdbcTemplate.queryForObject(sql,
+				new Object[] { favorite.getUser().getId(), favorite.getSong().getId() }, Integer.class) == 1) {
 			return true;
 		}
 		return false;
@@ -29,9 +30,10 @@ public class FavoriteDaoImpl implements FavoriteDao {
 	public boolean addFavorite(Favorite favorite) {
 		String sql = "INSERT INTO favorite(user_id, song_id, timestamp) VALUES (?, ?, ?)";
 		try {
-		Object[] newObj = new Object[] { favorite.getUser().getId(), favorite.getSong().getId(), MainUtility.dateToStringFormat(new Date(), "yyyy-MM-dd HH:mm:ss") };
-		int row = this.jdbcTemplate.update(sql, newObj);
-		}catch(Exception e) {
+			Object[] newObj = new Object[] { favorite.getUser().getId(), favorite.getSong().getId(),
+					MainUtility.dateToStringFormat(new Date(), "yyyy-MM-dd HH:mm:ss") };
+			int row = this.jdbcTemplate.update(sql, newObj);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -41,26 +43,38 @@ public class FavoriteDaoImpl implements FavoriteDao {
 	public boolean removeFavorite(Favorite favorite) {
 		String sql = "DELETE FROM favorite WHERE song_id = ? AND user_id = ?";
 		try {
-			Object[] newObj = new Object[] {favorite.getSong().getId(), favorite.getUser().getId()};
+			Object[] newObj = new Object[] { favorite.getSong().getId(), favorite.getUser().getId() };
 			int row = this.jdbcTemplate.update(sql, newObj);
 			return true;
-		}catch(Exception e) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteAllBySong(int songId) {
+		try {
+			String sql = "DELETE FROM favorite WHERE song_id = ?";
+			this.jdbcTemplate.update(sql, new Object[] { songId });
+			return true;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean delete(Favorite favorite) {
+	public int reportFavorite(Date from, Date to) {
 		try {
-			String sql = "DELETE FROM favorite WHERE song_id = ?";
-			if (this.jdbcTemplate.update(sql, new Object[] {favorite.getSong().getId()}) > 0) {
-				return true;
-			}
+			String sql = "SELECT COUNT(id) FROM favorite WHERE timestamp >= ? AND timestamp <= ? + interval 1 day";
+			int results = this.jdbcTemplate.queryForObject(sql.toString(),
+					new Object[] { from, to }, Integer.class);
+			return results;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return 0;
 	}
 
 }
